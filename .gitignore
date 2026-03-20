@@ -1,1 +1,5 @@
-*/__pycache__
+outputs/
+__pycache__/
+*.fits
+*.pyc
+.venv/
