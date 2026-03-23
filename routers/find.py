@@ -63,3 +63,39 @@ async def find_ws(ws: WebSocket):
     except Exception as e:
         try: await ws.send_json({"type": "error", "message": str(e)})
         except: pass
+
+
+from fastapi import HTTPException
+from fastapi.responses import JSONResponse
+import json
+from utils import ws_path
+
+@router.get("/tiling")
+def get_tiling(filename: str):
+    """Return the list of tiles from a tiling GeoJSON file."""
+    path = ws_path() / filename
+    if not path.exists():
+        # Look in current dir as fallback (for testing)
+        from pathlib import Path
+        path = Path(filename)
+    if not path.exists():
+        raise HTTPException(404, f"{filename} unavailable in workspace or current directory")
+
+    with open(path) as f:
+        data = json.load(f)
+
+    tiles = []
+    for feature in data.get("features", []):
+        props = feature.get("properties", {})
+        geom  = feature.get("geometry", {})
+        if geom.get("type") != "Polygon":
+            continue
+        coords = geom["coordinates"][0]
+        tiles.append({
+            "index": props.get("TileIndex"),
+            "mode":  props.get("ProcessingMode"),
+            "dsr":   props.get("DatasetRelease"),
+            "coords": coords,  
+        })
+
+    return JSONResponse({"tiles": tiles})

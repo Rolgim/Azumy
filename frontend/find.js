@@ -1,7 +1,7 @@
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS } from './websocket.js';
-import { initMap, goTo } from './map.js';
+import { initMap, goTo, loadTiling } from './map.js';
 
 export let foundTiles    = [];
 export let selectedTiles = [];
@@ -23,6 +23,9 @@ export async function initFind() {
   // Manual fields → map
   document.getElementById('findRa').addEventListener('change', syncFieldsToMap);
   document.getElementById('findDec').addEventListener('change', syncFieldsToMap);
+  // Tiling file → Update map overlay
+  document.getElementById('findTiling').addEventListener('change', e => loadTiling(e.target.value.trim()));
+  document.getElementById('findTiling').addEventListener('blur',   e => loadTiling(e.target.value.trim()));
 }
 
 function syncFieldsToMap() {
@@ -53,8 +56,6 @@ export function runFind() {
     tiling:      document.getElementById('findTiling').value.trim(),
   };
 
-  // If the server sends "Coordinates: X deg, Y deg", center the map on these coordinates 
-  // (e.g. if the input was an object name that got resolved)
   let progress = 0;
 
   openWS('/find/ws', payload, {

@@ -3,8 +3,11 @@
  * Click on the sky → dispatches "sky:select" with { ra, dec }
  */
 
-let aladin = null;
+const API = 'http://localhost:8000';
+
+let aladin      = null;
 let markerLayer = null;
+let tilingOverlay = null;
 
 export async function initMap(containerId) {
   await loadAladinScript();
@@ -44,6 +47,40 @@ export function goTo(ra, dec) {
   if (!aladin) return;
   aladin.gotoRaDec(ra, dec);
   placeMarker(ra, dec);
+}
+
+/**
+ * Load tiling polygons from the backend and display them as an overlay on the map.
+ */
+export async function loadTiling(filename) {
+  if (!aladin || !filename) return;
+
+  // Remove existing tiling overlay if any
+  if (tilingOverlay) {
+    aladin.removeOverlay(tilingOverlay);
+    tilingOverlay = null;
+  }
+
+  let data;
+  try {
+    const r = await fetch(`${API}/find/tiling?filename=${encodeURIComponent(filename)}`);
+    if (!r.ok) { console.warn('Tiling not found:', filename); return; }
+    data = await r.json();
+  } catch (e) {
+    console.warn('Could not load tiling:', e);
+    return;
+  }
+
+  tilingOverlay = A.graphicOverlay({ color: '#3d85f5', lineWidth: 1 });
+  aladin.addOverlay(tilingOverlay);
+
+  for (const tile of data.tiles) {
+    // coords GeoJSON : [[ra, dec], ...] — Aladin [[ra, dec], ...]
+    const footprint = A.polygon(tile.coords.map(([ra, dec]) => [ra, dec]));
+    tilingOverlay.add(footprint);
+  }
+
+  console.log(`Loaded ${data.tiles.length} tile polygons`);
 }
 
 function loadAladinScript() {
