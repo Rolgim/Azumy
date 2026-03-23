@@ -1,16 +1,15 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 import re
-from utils import stream_command, build_azul_cmd
+from utils import stream_command, build_cmd
 
 router = APIRouter()
 
 
 class FindReq(BaseModel):
-    workspace: str = "."
     objects: list[str] = []
-    coordinates: list[dict] = []   # [{"ra": 266.9, "dec": 64.0}, ...]
-    tiling: str = ""               # ex: "DpdMerFinalCatalog.geojson"
+    coordinates: list[dict] = []
+    tiling: str = ""
 
 
 def _args(req: FindReq) -> list[str]:
@@ -23,13 +22,12 @@ def _args(req: FindReq) -> list[str]:
 
 
 def _parse_tile(line: str) -> dict | None:
-    # "- wide: 102159776 (DR1); distance: 0.12°"
     m = re.search(r"-\s+(\w+):\s+(\d+)\s+\(([^)]+)\);\s+distance:\s+([\d.]+)", line)
     if m:
         return {
             "index": m.group(2),
-            "mode": m.group(1),
-            "dsr": m.group(3),
+            "mode":  m.group(1),
+            "dsr":   m.group(3),
             "distance": float(m.group(4)),
         }
     return None
@@ -42,10 +40,10 @@ async def find_ws(ws: WebSocket):
         req = FindReq(**(await ws.receive_json()))
         args = _args(req)
         if not args:
-            await ws.send_json({"type": "error", "message": "Required at least one object or coordinate RA/Dec"})
+            await ws.send_json({"type": "error", "message": "Provide at least one object or coordinates"})
             return
 
-        cmd = build_azul_cmd("find", args, req.workspace)
+        cmd = build_cmd("find", args)
         await ws.send_json({"type": "cmd", "message": " ".join(cmd)})
 
         seen = set()

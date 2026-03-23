@@ -1,5 +1,6 @@
-outputs/
+workspace/
 __pycache__/
 *.fits
 *.pyc
 .venv/
+*.geojson

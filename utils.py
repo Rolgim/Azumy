@@ -3,10 +3,13 @@ import os
 from typing import AsyncIterator
 from pathlib import Path
 
+WORKSPACE = Path("workspace")
+WORKSPACE.mkdir(exist_ok=True)
+
 
 async def stream_command(cmd: list[str], cwd: str | None = None) -> AsyncIterator[str]:
     env = os.environ.copy()
-    env["PYTHONUNBUFFERED"] = "1"  # force Python to flush output immediately
+    env["PYTHONUNBUFFERED"] = "1"
 
     process = await asyncio.create_subprocess_exec(
         *cmd,
@@ -24,20 +27,15 @@ async def stream_command(cmd: list[str], cwd: str | None = None) -> AsyncIterato
     yield f"__EXIT__{process.returncode}"
 
 
-def build_azul_cmd(sub: str, args: list[str], workspace: str = ".", flags: dict | None = None) -> list[str]:
-    cmd = ["azul"]
-    if workspace and workspace not in (".", "./"):
-        cmd += ["--workspace", workspace]
-    cmd.append(sub)
+def build_cmd(sub: str, args: list[str], flags: dict | None = None) -> list[str]:
+    cmd = ["azul", "--workspace", str(WORKSPACE), sub]
     cmd.extend(args)
     if flags:
         for k, v in flags.items():
-            if v is True:       cmd.append(k)
+            if v is True:                    cmd.append(k)
             elif v not in (None, False, ""): cmd += [k, str(v)]
     return cmd
 
 
-def ws_path(workspace: str) -> Path:
-    p = Path(workspace).expanduser().resolve()
-    p.mkdir(parents=True, exist_ok=True)
-    return p
+def ws_path() -> Path:
+    return WORKSPACE

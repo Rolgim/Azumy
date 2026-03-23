@@ -33,7 +33,7 @@ app.include_router(retrieve.router, prefix="/retrieve", tags=["Retrieve"])
 outputs_dir = Path("outputs")
 outputs_dir.mkdir(exist_ok=True)
 app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
-
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 @app.get("/", tags=["Health"])
 def root():

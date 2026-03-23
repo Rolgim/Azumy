@@ -16,7 +16,6 @@ export function runRetrieve() {
   progShow('Retrieve'); progSet('Retrieve', 0);
 
   const payload = {
-    workspace:    '.',
     tile_indices: tiles,
     provider:     document.getElementById('retrieveProvider').value,
     dsr:          document.getElementById('retrieveDsr').value,
@@ -49,7 +48,7 @@ export function runRetrieve() {
   openWS('/retrieve/ws', payload, {
     cmd:  m => termLine('Retrieve', 'c-cmd', '$ ' + m.message),
     log:  m => {
-      // "Download and extract datafiles to:" marque le début du téléchargement
+      // "Download and extract datafiles to:" start the heartbeat, then stop it when the first file is received (or on error/exit)
       if (m.message.startsWith('Download and extract')) {
         termLine('Retrieve', termClassFromMessage(m.message), m.message);
         startHeartbeat();
@@ -60,7 +59,7 @@ export function runRetrieve() {
     file: m => {
       stopHeartbeat();
       termLine('Retrieve', 'c-ok', `✓ [${m.filter}] ${m.name}`);
-      startHeartbeat(); // repart pour le fichier suivant
+      startHeartbeat(); // restart heartbeat for next file (if any)
     },
     progress: m => progSet('Retrieve', m.percent),
     exit:  m => {
