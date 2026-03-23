@@ -38,4 +38,4 @@ def build_cmd(sub: str, args: list[str], flags: dict | None = None) -> list[str]
 
 
 def ws_path() -> Path:
-    return WORKSPACE
+    return WORKSPACE.resolve()

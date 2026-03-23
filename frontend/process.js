@@ -53,12 +53,14 @@ export function runProcess() {
     cmd:         m => termLine('Process', 'c-cmd', '$ ' + m.message),
     log:         m => termLine('Process', termClassFromMessage(m.message), m.message),
     progress:    m => progSet('Process', m.percent),
-    output_file: m => showResult(m.name),
+    output_file: m => showResult(m.output_file),
+    preview_file: m => showResult(m.preview_file),
     exit:        m => { if (m.code !== 0) termLine('Process', 'c-err', `exit ${m.code}`); },
     done:        m => {
       progSet('Process', 100);
       btn.disabled = false;
       if (m.output_file) showResult(m.output_file);
+      if (m.preview_file) showResult(m.preview_file);
     },
     error:       m => { termLine('Process', 'c-err', m.message); btn.disabled = false; },
   });
@@ -73,7 +75,7 @@ function showResult(filename) {
   // TIF files can't be displayed directly
   const ext = filename.split('.').pop().toLowerCase();
   if (['jpg','jpeg','png'].includes(ext)) {
-    img.src = `http://localhost:8000/outputs/${tile}/${filename}?t=${Date.now()}`;
+    img.src = `http://localhost:8000/workspace/${tile}/${filename}?t=${Date.now()}`;
     img.style.display = 'block';
   } else {
     img.style.display = 'none';

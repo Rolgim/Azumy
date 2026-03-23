@@ -200,9 +200,11 @@
   <div class="progress" id="progProcess"><div class="progress-bar" id="progProcessBar" style="width:0%"></div></div>
   <div class="term" id="termProcess"></div>
 
-  <div id="processResult" style="display:none; margin-top:14px">
-    <img id="processResultImg" style="max-width:100%; border-radius:4px; display:none">
-    <div id="processResultLabel" style="font-size:11px; color:#3d6a9a; margin-top:6px"></div>
+  <div id="processResult" style="display:none; text-align:center; margin-top:14px;">
+    <div id="processResultWrapper" style="overflow:auto; border:1px solid #222; border-radius:4px; background:black; padding:8px; box-shadow:0 0 4px rgba(0,0,0,0.5)">
+      <img id="processResultImg" src="" alt="Preview" style="display:block; max-width:100%; height:auto; margin:0 auto; border-radius:2px;">
+    </div>
+    <div id="processResultLabel" style="margin-top:8px; color:#ccc; font-size:12px;"></div>
   </div>
 </section>
 
