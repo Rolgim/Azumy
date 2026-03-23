@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
-from routers import find, workspace, retrieve
+from routers import find, workspace, retrieve, crop, process
 
 app = FastAPI(
     title="Azulero GUI API",
@@ -28,11 +28,13 @@ app.add_middleware(
 app.include_router(workspace.router, prefix="/workspace", tags=["Workspace"])
 app.include_router(find.router,      prefix="/find",      tags=["Find"])
 app.include_router(retrieve.router, prefix="/retrieve", tags=["Retrieve"])
+app.include_router(crop.router,      prefix="/crop",      tags=["Crop"])
+app.include_router(process.router,   prefix="/process",   tags=["Process"])
 
 # Serve images/videos
-outputs_dir = Path("outputs")
+outputs_dir = Path("workspace")
 outputs_dir.mkdir(exist_ok=True)
-app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
+app.mount("/workspace", StaticFiles(directory="workspace"), name="workspace")
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 @app.get("/", tags=["Health"])

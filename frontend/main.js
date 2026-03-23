@@ -1,9 +1,18 @@
 import { initFind, runFind, sendToRetrieve } from './find.js';
 import { runRetrieve }                        from './retrieve.js';
+import { loadCropPreview, sendCropToProcess }     from './crop.js';
+import { runProcess, resetProcess }           from './process.js';
 
 document.getElementById('btnFind').addEventListener('click', runFind);
 document.getElementById('btnSendRetrieve').addEventListener('click', sendToRetrieve);
 document.getElementById('btnRetrieve').addEventListener('click', runRetrieve);
+document.getElementById('btnCropPreview').addEventListener('click', () => {
+    const tile = document.getElementById('cropTile').value.trim();
+    loadCropPreview(tile);
+});
+document.getElementById('btnCropSend').addEventListener('click', sendCropToProcess);
+document.getElementById('btnProcess').addEventListener('click', runProcess);
+document.getElementById('btnResetProcess').addEventListener('click', resetProcess);
 
 // Init map on page load
 initFind();
