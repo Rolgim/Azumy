@@ -23,22 +23,25 @@
 
   <div class="row">
     <div>
-      <label>Objects</label>
-      <input id="findObjects" type="text" placeholder="M82 NGC6536">
-    </div>
-    <div>
-      <label>Tiling file</label>
-      <input id="findTiling" type="text" placeholder="DpdMerFinalCatalog.geojson">
-    </div>
-  </div>
-  <div class="row">
-    <div>
       <label>RA (deg)</label>
       <input id="findRa" type="text" placeholder="266.9397155">
     </div>
     <div>
       <label>Dec (deg)</label>
       <input id="findDec" type="text" placeholder="+64.0472200">
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <label>Objects</label>
+      <input id="findObjects" type="text" placeholder="M82 NGC6536">
+    </div>
+    <div>
+      <label>Tiling</label>
+      <div style="display:flex; align-items:flex-end; padding-bottom:12px">
+        <button class="primary" id="btnUploadTiling" style="width:100%">Upload</button>
+        <input id="tilingFileInput" type="file" accept=".geojson" style="display:none">
+      </div>
     </div>
   </div>
 

@@ -2,6 +2,10 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 import re
 from utils import stream_command, build_cmd
+from fastapi import HTTPException, UploadFile, File
+from fastapi.responses import JSONResponse
+import json
+from utils import ws_path
 
 router = APIRouter()
 
@@ -65,10 +69,18 @@ async def find_ws(ws: WebSocket):
         except: pass
 
 
-from fastapi import HTTPException
-from fastapi.responses import JSONResponse
-import json
-from utils import ws_path
+@router.post("/geojson")
+async def upload_geojson(file: UploadFile = File(...)):
+    """Receive a GeoJSON file and store it in workspace."""
+    if not file.filename.lower().endswith(".geojson"):
+        raise HTTPException(400, "Only .geojson files are allowed")
+    path = ws_path() / file.filename
+    try:
+        content = await file.read()
+        path.write_bytes(content)
+    except Exception as e:
+        raise HTTPException(500, f"Could not save file: {e}")
+    return JSONResponse({"filename": file.filename})
 
 @router.get("/tiling")
 def get_tiling(filename: str):

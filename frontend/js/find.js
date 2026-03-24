@@ -10,8 +10,19 @@ let selectedRa  = null;
 let selectedDec = null;
 
 export async function initFind() {
+  // Init map ASAP
   await initMap('aladinMap');
 
+  // Attach UI listeners only when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initUI);
+  } else {
+    initUI();
+  }
+}
+
+
+function initUI() {
   // Map → fill fields
   document.addEventListener('sky:select', ({ detail: { ra, dec } }) => {
     selectedRa  = ra;
@@ -21,11 +32,68 @@ export async function initFind() {
   });
 
   // Manual fields → map
-  document.getElementById('findRa').addEventListener('change', syncFieldsToMap);
-  document.getElementById('findDec').addEventListener('change', syncFieldsToMap);
+  document.getElementById('findRa')?.addEventListener('change', syncFieldsToMap);
+  document.getElementById('findDec')?.addEventListener('change', syncFieldsToMap);
+
   // Tiling file → Update map overlay
-  document.getElementById('findTiling').addEventListener('change', e => loadTiling(e.target.value.trim()));
-  document.getElementById('findTiling').addEventListener('blur',   e => loadTiling(e.target.value.trim()));
+  document.getElementById('findTiling')?.addEventListener('change', e => loadTiling(e.target.value.trim()));
+  document.getElementById('findTiling')?.addEventListener('blur',   e => loadTiling(e.target.value.trim()));
+
+  // Upload button → open file picker
+  document.getElementById('btnUploadTiling')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('tilingFileInput');
+    if (input) {
+      input.value = null; // allow re-upload same file
+      input.click();
+    }
+  });
+
+  // File selected → upload to backend
+  document.getElementById('tilingFileInput')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const btn = document.getElementById('btnUploadTiling');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Uploading…';
+    }
+
+    const form = new FormData();
+    form.append('file', file);
+
+    try {
+      const resp = await fetch('http://localhost:8000/find/geojson', {
+        method: 'POST',
+        body: form
+      });
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Upload';
+      }
+
+      if (resp.ok) {
+        const data = await resp.json();
+        // Set tiling filename in input (and trigger map update)
+        const tilingInput = document.getElementById('findTiling');
+        if (tilingInput) tilingInput.value = data.filename;
+
+        // Load tiling overlay on map
+        loadTiling(data.filename);
+      } else {
+        console.warn('Upload failed');
+      }
+
+    } catch (err) {
+      console.warn('Upload error:', err);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Upload';
+      }
+    }
+  });
 }
 
 function syncFieldsToMap() {
@@ -53,7 +121,7 @@ export function runFind() {
   const payload = {
     objects,
     coordinates: (!isNaN(ra) && !isNaN(dec)) ? [{ ra, dec }] : [],
-    tiling:      document.getElementById('findTiling').value.trim(),
+    tiling:      document.getElementById('findTiling')?.value.trim(),
   };
 
   let progress = 0;
