@@ -20,12 +20,13 @@ export async function initMap(containerId) {
     cooFrame:              'ICRSd',
     showReticle:           false,
     showZoomControl:       true,
-    showFullscreenControl: false,
+    showFullscreenControl: true,
     showLayersControl:     true,
     showGotoControl:       true,
-    showShareControl:      false,
+    showShareControl:      true,
+    showCooLocation:       true,
   });
-
+  
   markerLayer = A.catalog({ shape: 'circle', color: '#4ec9b0', sourceSize: 12 });
   aladin.addCatalog(markerLayer);
 
@@ -75,7 +76,7 @@ export async function loadTiling(filename) {
   aladin.addOverlay(tilingOverlay);
 
   for (const tile of data.tiles) {
-    // coords GeoJSON : [[ra, dec], ...] — Aladin [[ra, dec], ...]
+    // coords GeoJSON : [[ra, dec], ...] - Aladin [[ra, dec], ...]
     const footprint = A.polygon(tile.coords.map(([ra, dec]) => [ra, dec]));
     tilingOverlay.add(footprint);
   }

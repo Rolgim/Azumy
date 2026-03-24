@@ -10,7 +10,7 @@ body {
 
 header {
   text-align: center;
-  padding: 28px 24px 20px;
+  padding: 10px 10px 10px;
   border-bottom: 1px solid #0f2040;
   margin-bottom: 32px;
   background: linear-gradient(180deg, #050d1a 0%, #06101e 100%);
@@ -169,11 +169,12 @@ button.primary:hover {
 
 #aladinMap {
   width: 100%;
-  height: 380px;
+  height: 680px;
   border: 1px solid #0f2040;
   border-radius: 4px;
   margin-bottom: 8px;
   overflow: hidden;
+  z-index: 1;
 }
 .map-hint {
   font-size: 11px;
