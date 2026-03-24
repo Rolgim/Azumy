@@ -87,7 +87,7 @@ function loadAladinScript() {
   return new Promise((resolve, reject) => {
     if (window.A) { resolve(); return; }
     const script = document.createElement('script');
-    script.src     = 'aladin.js';
+    script.src     = '../aladin.js';
     script.charset = 'utf-8';
     script.onload  = resolve;
     script.onerror = reject;

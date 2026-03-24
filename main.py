@@ -37,10 +37,6 @@ outputs_dir.mkdir(exist_ok=True)
 app.mount("/workspace", StaticFiles(directory="workspace"), name="workspace")
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
-@app.get("/", tags=["Health"])
-def root():
-    return {"status": "ok", "service": "Azulero GUI API v1.0.0"}
-
 
 @app.get("/health", tags=["Health"])
 def health():
