@@ -1,6 +1,6 @@
 # Azulweb
 
-Web interface for [Azulero](https://github.com/kabasset/azulero), a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
+Web interface for [Azulero](https://github.com/kabasset/azulero) by A. Basset, a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Azulweb wraps the `azul` command-line pipeline into a browser-based interface. I
 |------|---------|-------------|
 | **Find** | `azul find` | Locate tile indices from object names or sky coordinates |
 | **Retrieve** | `azul retrieve` | Download MER FITS files from ESA archives |
-| **Crop** | — | Visually select a region of interest on the VIS channel |
+| **Crop** | `azul crop` | Visually select a region of interest on the VIS channel |
 | **Process** | `azul process` | Render a color sRGB image from IYJH channels |
 
 ## Requirements
