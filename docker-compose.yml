@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ${WORKSPACE:-./data}:/app/outputs
+      - ${WORKSPACE:-./data}:/app/workspace
       - ./secrets/netrc:/root/.netrc:ro
     environment:
       - PYTHONUNBUFFERED=1
