@@ -55,7 +55,6 @@ function initUI() {
       if (resp.ok) {
         const data = await resp.json();
         if (btn) { btn.disabled = false; btn.textContent = data.filename; }
-        document.getElementById('findTiling').value = data.filename;
         loadTiling(data.filename);
       } else {
         if (btn) { btn.disabled = false; btn.textContent = 'Load'; }
@@ -93,7 +92,7 @@ export function runFind() {
   const payload = {
     objects,
     coordinates: (!isNaN(ra) && !isNaN(dec)) ? [{ ra, dec }] : [],
-    tiling:      document.getElementById('findTiling')?.value.trim(),
+    tiling: document.getElementById('btnUploadTiling')?.dataset.tiling || '',
   };
 
   let progress = 0;
