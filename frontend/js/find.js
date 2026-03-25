@@ -1,6 +1,6 @@
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
-import { openWS } from './websocket.js';
+import { openWS, API } from './websocket.js';
 import { initMap, goTo, loadTiling } from './map.js';
 
 export let foundTiles    = [];
@@ -10,17 +10,9 @@ let selectedRa  = null;
 let selectedDec = null;
 
 export async function initFind() {
-  // Init map ASAP
   await initMap('aladinMap');
-
-  // Attach UI listeners only when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initUI);
-  } else {
-    initUI();
-  }
+  initUI();
 }
-
 
 function initUI() {
   // Map → fill fields
@@ -35,7 +27,7 @@ function initUI() {
   document.getElementById('findRa')?.addEventListener('change', syncFieldsToMap);
   document.getElementById('findDec')?.addEventListener('change', syncFieldsToMap);
 
-  // Tiling file → Update map overlay
+  // Tiling input → update map overlay
   document.getElementById('findTiling')?.addEventListener('change', e => loadTiling(e.target.value.trim()));
   document.getElementById('findTiling')?.addEventListener('blur',   e => loadTiling(e.target.value.trim()));
 
@@ -43,10 +35,7 @@ function initUI() {
   document.getElementById('btnUploadTiling')?.addEventListener('click', (e) => {
     e.preventDefault();
     const input = document.getElementById('tilingFileInput');
-    if (input) {
-      input.value = null; // allow re-upload same file
-      input.click();
-    }
+    if (input) { input.value = null; input.click(); }
   });
 
   // File selected → upload to backend
@@ -55,43 +44,26 @@ function initUI() {
     if (!file) return;
 
     const btn = document.getElementById('btnUploadTiling');
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = 'Uploading…';
-    }
+    if (btn) { btn.disabled = true; btn.textContent = 'Uploading…'; }
 
     const form = new FormData();
     form.append('file', file);
 
     try {
-      const resp = await fetch('http://localhost:8000/find/geojson', {
-        method: 'POST',
-        body: form
-      });
-
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = 'Upload';
-      }
+      const resp = await fetch(`${API}/find/geojson`, { method: 'POST', body: form });
 
       if (resp.ok) {
         const data = await resp.json();
-        // Set tiling filename in input (and trigger map update)
-        const tilingInput = document.getElementById('findTiling');
-        if (tilingInput) tilingInput.value = data.filename;
-
-        // Load tiling overlay on map
+        if (btn) { btn.disabled = false; btn.textContent = data.filename; }
+        document.getElementById('findTiling').value = data.filename;
         loadTiling(data.filename);
       } else {
+        if (btn) { btn.disabled = false; btn.textContent = 'Load'; }
         console.warn('Upload failed');
       }
-
     } catch (err) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Load'; }
       console.warn('Upload error:', err);
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = 'Upload';
-      }
     }
   });
 }
@@ -130,7 +102,6 @@ export function runFind() {
     cmd:  m => termLine('Find', 'c-cmd', '$ ' + m.message),
     log:  m => {
       termLine('Find', termClassFromMessage(m.message), m.message);
-      // "- Coordinates: 148.97 deg, 69.68 deg" → center map on these coordinates
       const coordMatch = m.message.match(/Coordinates:\s*([\d.]+)\s*deg[^,]*,\s*([\d.]+)/);
       if (coordMatch) goTo(parseFloat(coordMatch[1]), parseFloat(coordMatch[2]));
       progress = Math.min(progress + 10, 90);

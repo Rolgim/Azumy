@@ -3,7 +3,7 @@
  * Click on the sky → dispatches "sky:select" with { ra, dec }
  */
 
-const API = 'http://localhost:8000';
+import { API } from './websocket.js';
 
 let aladin      = null;
 let markerLayer = null;
