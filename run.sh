@@ -36,7 +36,7 @@ if [ ! -f "$NETRC_FILE" ]; then
  
   # IDR
   echo "  — IDR (easidr.esac.esa.int)"
-  read -rp "    Username (email)? " IDR_USER
+  read -rp "    Username? " IDR_USER
   if [ -n "$IDR_USER" ]; then
     read -rsp "    Password? " IDR_PASS
     echo ""
@@ -54,7 +54,7 @@ NETRC
  
   # DSS
   echo "  — DSS (eas-dps-rest-ops.esac.esa.int)"
-  read -rp "    Username (email)? " DSS_USER
+  read -rp "    Username? " DSS_USER
   if [ -n "$DSS_USER" ]; then
     read -rsp "    Password? " DSS_PASS
     echo ""
