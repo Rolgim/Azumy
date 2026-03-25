@@ -1,6 +1,6 @@
 # Azulweb
 
-Web interface for [Azulero](https://github.com/kabasset/azulero), a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
+Web interface for [Azulero](https://github.com/kabasset/azulero) by A. Basset, a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
 
 ## Overview
 
