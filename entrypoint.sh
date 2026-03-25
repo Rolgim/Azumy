@@ -16,4 +16,4 @@ if [ -n "$DSS_USER" ] && [ -n "$DSS_PASS" ]; then
     "$DSS_USER" "$DSS_PASS" >> /root/.netrc
 fi
 
-exec uvicorn main:app --host 0.0.0.0 --port 8000
+exec uv run uvicorn main:app --host 0.0.0.0 --port 8000
