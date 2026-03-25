@@ -1,0 +1,12 @@
+services:
+  azulweb:
+    build: .
+    image: azulweb
+    ports:
+      - "8000:8000"
+    volumes:
+      - ${WORKSPACE:-./data}:/app/outputs
+      - ./secrets/netrc:/root/.netrc:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
