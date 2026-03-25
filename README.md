@@ -72,10 +72,6 @@ https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCata
 - Expand **Parameters** to adjust rendering settings (zero points, scaling, stretch, hue, saturation...)
 - Click **▶ azul process** — output image is displayed when ready
 
-## Updating credentials
-
-After first setup, credentials can be updated via **⚙ Settings** in the interface, or by deleting `secrets/netrc` and re-running `./run.sh`.
-
 ## Project structure
 
 ```
