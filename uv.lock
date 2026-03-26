@@ -85,22 +85,19 @@ wheels = [
 [[package]]
 name = "azulero"
 version = "1.1.1"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/kabasset/azulero.git?rev=develop#890b75aa49dc36f1c39540bc93431f51474f87ee" }
 dependencies = [
     { name = "astropy" },
     { name = "astroquery" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "opencv-python" },
+    { name = "py4j" },
     { name = "pyyaml" },
     { name = "requests" },
     { name = "scikit-image" },
     { name = "scipy" },
     { name = "shapely" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/fd/44/00ce22d46c16c3efcf79fee9187fc1ff52740707854cf0b22bd45c5e6902/azulero-1.1.1.tar.gz", hash = "sha256:993b3f22882448f1883ed8123e1d2a00f4b7a9405c1859d7eb681470da9a7d22", size = 5532720, upload-time = "2026-01-22T10:42:07.735Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/27/d5b697cc6ea92cadf32c810eb6074a80b3c5d42bab1d05c795b713b053a4/azulero-1.1.1-py3-none-any.whl", hash = "sha256:520aace5bef8e011e0c40e4beae51488ddfe106196a89a1bc3db5b530e4e1d7f", size = 29912, upload-time = "2026-01-22T10:41:55.029Z" },
 ]
 
 [[package]]
@@ -119,7 +116,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "azulero", specifier = ">=1.1.1" },
+    { name = "azulero", git = "https://github.com/kabasset/azulero.git?rev=develop" },
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "python-multipart", specifier = ">=0.0.22" },
     { name = "pyvips", specifier = ">=3.1.1" },
@@ -874,6 +871,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/01/4a/9202e8d11714c1fc5951f2e1ef362f2d7fbc595e1f6717971d5dd750e969/pillow-12.1.1-cp314-cp314t-win32.whl", hash = "sha256:d2912fd8114fc5545aa3a4b5576512f64c55a03f3ebcca4c10194d593d43ea36", size = 6438736, upload-time = "2026-02-11T04:22:46.347Z" },
     { url = "https://files.pythonhosted.org/packages/f3/ca/cbce2327eb9885476b3957b2e82eb12c866a8b16ad77392864ad601022ce/pillow-12.1.1-cp314-cp314t-win_amd64.whl", hash = "sha256:4ceb838d4bd9dab43e06c363cab2eebf63846d6a4aeaea283bbdfd8f1a8ed58b", size = 7182894, upload-time = "2026-02-11T04:22:48.114Z" },
     { url = "https://files.pythonhosted.org/packages/ec/d2/de599c95ba0a973b94410477f8bf0b6f0b5e67360eb89bcb1ad365258beb/pillow-12.1.1-cp314-cp314t-win_arm64.whl", hash = "sha256:7b03048319bfc6170e93bd60728a1af51d3dd7704935feb228c4d4faab35d334", size = 2546446, upload-time = "2026-02-11T04:22:50.342Z" },
+]
+
+[[package]]
+name = "py4j"
+version = "0.10.9.9"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/38/31/0b210511177070c8d5d3059556194352e5753602fa64b85b7ab81ec1a009/py4j-0.10.9.9.tar.gz", hash = "sha256:f694cad19efa5bd1dee4f3e5270eb406613c974394035e5bfc4ec1aba870b879", size = 761089, upload-time = "2025-01-15T03:53:18.624Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bd/db/ea0203e495be491c85af87b66e37acfd3bf756fd985f87e46fc5e3bf022c/py4j-0.10.9.9-py2.py3-none-any.whl", hash = "sha256:c7c26e4158defb37b0bb124933163641a2ff6e3a3913f7811b0ddbe07ed61533", size = 203008, upload-time = "2025-01-15T03:53:15.648Z" },
 ]
 
 [[package]]

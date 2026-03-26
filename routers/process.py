@@ -73,6 +73,7 @@ def _args(req: ProcessReq) -> list[str]:
     args += ["--offset", str(req.offset)]
     args += ["--hue", str(req.hue)]
     args += ["--saturation", str(req.saturation)]
+    args += ["--output", "{workspace}/{tile}.fits"]  # Save outputs as FITS
 
     return args
 
