@@ -54,7 +54,7 @@ function initUI() {
 
       if (resp.ok) {
         const data = await resp.json();
-        if (btn) { btn.disabled = false; btn.textContent = data.filename; }
+        if (btn) { btn.disabled = false; btn.textContent = data.filename; btn.dataset.tiling = data.filename; }
         loadTiling(data.filename);
       } else {
         if (btn) { btn.disabled = false; btn.textContent = 'Load'; }

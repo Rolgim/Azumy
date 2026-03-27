@@ -50,13 +50,13 @@ export function runProcess() {
   };
 
   openWS('/process/ws', payload, {
-    cmd:         m => termLine('Process', 'c-cmd', '$ ' + m.message),
-    log:         m => termLine('Process', termClassFromMessage(m.message), m.message),
-    progress:    m => progSet('Process', m.percent),
-    output_file: m => showResult(m.output_file),
-    preview_file: m => showResult(m.preview_file),
-    exit:        m => { if (m.code !== 0) termLine('Process', 'c-err', `exit ${m.code}`); },
-    done:        m => {
+    cmd:          m => termLine('Process', 'c-cmd', '$ ' + m.message),
+    log:          m => termLine('Process', termClassFromMessage(m.message), m.message),
+    progress:     m => progSet('Process', m.percent),
+    output_file:  m => showResult(m.name),
+    preview: m => showResult(m.name),
+    exit:         m => { if (m.code !== 0) termLine('Process', 'c-err', `exit ${m.code}`); },
+    done:         m => {
       progSet('Process', 100);
       btn.disabled = false;
       if (m.output_file) showResult(m.output_file);
