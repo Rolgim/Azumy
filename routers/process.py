@@ -73,7 +73,6 @@ def _args(req: ProcessReq) -> list[str]:
     args += ["--offset", str(req.offset)]
     args += ["--hue", str(req.hue)]
     args += ["--saturation", str(req.saturation)]
-    args += ["--output", "{workspace}/{tile}.fits"]  # Save outputs as FITS
 
     return args
 
@@ -136,7 +135,7 @@ async def process_ws(ws: WebSocket):
                 filename = m.group(1)
                 tile_number = req.tile.split("[")[0]  # e.g., "102160242"
                 output_file = ws_path() / tile_number / filename
-                await ws.send_json({"type": "output_file", "name": str(output_file)})
+                await ws.send_json({"type": "output_file", "name": filename})
 
         # Generate preview after processing completes
         if output_file:
@@ -152,7 +151,7 @@ async def process_ws(ws: WebSocket):
 
                 await ws.send_json({
                     "type": "preview",
-                    "preview_file": preview_file_name
+                    "name": preview_file_name
                 })
 
             except Exception as e:
@@ -164,8 +163,8 @@ async def process_ws(ws: WebSocket):
         # Final message
         await ws.send_json({
             "type": "done",
-            "output_file": filename,
-            "preview_file": preview_file_name
+            "output_file": filename if output_file else None,
+            "preview_file": preview_file_name if preview_file else None,
         })
 
     except WebSocketDisconnect:
