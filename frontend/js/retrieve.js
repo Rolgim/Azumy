@@ -112,7 +112,7 @@ function addTileChip(tile) {
 }
 
 export function sendToCrop() {
-  const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0];
+  const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0]?.index;
   if (!tile) return;
   document.getElementById('cropTile').value = tile;
   document.getElementById('cropTile').scrollIntoView({ behavior: 'smooth' });
