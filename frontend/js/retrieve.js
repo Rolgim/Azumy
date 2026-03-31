@@ -2,8 +2,14 @@ import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS } from './websocket.js';
 
+export let retrievedTiles    = [];
+export let selectedTiles = [];
+
 export function runRetrieve() {
   termClear('Retrieve');
+
+  document.getElementById('sendCrop').style.display = 'none';
+  retrievedTiles = []; selectedTiles = [];
 
   const tiles = document.getElementById('retrieveTiles').value.trim().split(/\s+/).filter(Boolean);
   if (!tiles.length) {
@@ -66,10 +72,14 @@ export function runRetrieve() {
       stopHeartbeat();
       if (m.code !== 0) termLine('Retrieve', 'c-err', `exit ${m.code}`);
     },
-    done:  () => {
+    done: m => {
       stopHeartbeat();
       progSet('Retrieve', 100);
       btn.disabled = false;
+      const tileIndex = m.tile;
+      retrievedTiles.push(tileIndex);
+      addTileChip({ index: tileIndex });
+      document.getElementById('sendCrop').style.display = 'block';
     },
     error: m => {
       stopHeartbeat();
@@ -77,4 +87,33 @@ export function runRetrieve() {
       btn.disabled = false;
     },
   });
+}
+
+
+function addTileChip(tile) {
+  const chip = document.createElement('div');
+  chip.className     = 'tile';
+  chip.dataset.index = tile.index;
+  chip.textContent   = tile.index + (tile.mode ? ` (${tile.mode})` : '');
+  chip.onclick = () => {
+    const wasSelected = chip.classList.contains('sel');
+    // Unselect all chips and clear selectedTiles
+    document.querySelectorAll('#tilesRetrieved .tile').forEach(c => {
+      c.classList.remove('sel');
+    });
+    selectedTiles = [];
+    // select the clicked chip if it wasn't already selected
+    if (!wasSelected) {
+      chip.classList.add('sel');
+      selectedTiles.push(tile.index);
+    }
+  };
+  document.getElementById("tilesRetrieved").appendChild(chip);
+}
+
+export function sendToCrop() {
+  const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0];
+  if (!tile) return;
+  document.getElementById('cropTile').value = tile;
+  document.getElementById('cropTile').scrollIntoView({ behavior: 'smooth' });
 }
