@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export function termClear(id) {
     document.getElementById('term' + id).innerHTML = '';
   }

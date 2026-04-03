@@ -1,4 +1,7 @@
 /**
+ * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * map.js — Aladin Lite v3 sky map
  * Click on the sky → dispatches "sky:select" with { ra, dec }
  */

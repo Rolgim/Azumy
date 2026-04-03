@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { initFind, runFind, sendToRetrieve }      from './find.js';
 import { runRetrieve, sendToCrop}                 from './retrieve.js';
 import { loadCropPreview, sendCropToProcess }     from './crop.js';

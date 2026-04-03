@@ -1,4 +1,7 @@
 /**
+ * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * crop.js — Interactive crop via canvas rectangle selection
  */
 
