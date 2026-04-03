@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+# SPDX-License-Identifier: Apache-2.0
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel

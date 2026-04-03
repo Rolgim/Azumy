@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS } from './websocket.js';
@@ -112,7 +117,7 @@ function addTileChip(tile) {
 }
 
 export function sendToCrop() {
-  const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0];
+  const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0]?.index;
   if (!tile) return;
   document.getElementById('cropTile').value = tile;
   document.getElementById('cropTile').scrollIntoView({ behavior: 'smooth' });

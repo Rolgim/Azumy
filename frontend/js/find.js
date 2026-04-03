@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS, API } from './websocket.js';
