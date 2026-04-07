@@ -49,7 +49,7 @@ Then open **http://localhost:8000** in your browser.
 - Click **▶ azul find** — found tiles appear as chips below the terminal
 - Select tiles and click **→ Send to Retrieve**
 
-The tiling GeoJSON for DR1 is available at:
+The tiling GeoJSON for DR1 is available at (Euclid consortium members only):
 ```
 https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson
 ```
