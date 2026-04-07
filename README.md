@@ -1,4 +1,15 @@
-# Azulweb
+# Azulweb 
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-blue" />
+  <img src="https://img.shields.io/badge/FastAPI-0.135+-green" />
+  <img src="https://img.shields.io/badge/frontend-JavaScript-yellow" />
+  <img src="https://img.shields.io/badge/packaging-uv-purple" />
+  <img src="https://img.shields.io/badge/docker--compose-supported-blue" />
+  <img src="https://img.shields.io/badge/server-uvicorn-black" />
+  <img src="https://img.shields.io/badge/websocket-enabled-orange" />
+  <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
+</p>
 
 Web interface for [Azulero](https://github.com/kabasset/azulero) by A. Basset, a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
 
