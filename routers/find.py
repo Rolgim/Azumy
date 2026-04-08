@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
+import logging
 import re
 
 from fastapi import APIRouter, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
@@ -9,6 +10,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from utils import build_cmd, stream_command, ws_path
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -68,12 +71,12 @@ async def find_ws(ws: WebSocket):
 
         await ws.send_json({"type": "done"})
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket disconnected")
     except Exception as e:
         try:
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
-            pass
+            logger.debug("WebSocket closed before sending error")
 
 
 @router.post("/geojson")

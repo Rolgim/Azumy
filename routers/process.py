@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 import re
 
 import pyvips
@@ -8,6 +9,8 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from utils import build_cmd, stream_command, ws_path
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -164,10 +167,10 @@ async def process_ws(ws: WebSocket):
         )
 
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket disconnected")
 
     except Exception as e:
         try:
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
-            pass
+            logger.debug("WebSocket closed before sending error")

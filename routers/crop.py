@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import io as sysio
+import logging
 import math
 from pathlib import Path
 
@@ -11,6 +12,8 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 
 from utils import ws_path
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 

@@ -1,9 +1,12 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 

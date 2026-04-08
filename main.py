@@ -3,6 +3,7 @@ Azulweb — Backend FastAPI
 Start with: uvicorn main:app --reload --port 8000
 """
 
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -10,6 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from routers import crop, find, process, retrieve, workspace
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
 
 app = FastAPI(
     title="Azulero GUI API",

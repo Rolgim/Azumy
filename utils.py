@@ -1,7 +1,10 @@
 import asyncio
+import logging
 import os
 from collections.abc import AsyncIterator
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 WORKSPACE = Path("workspace")
 WORKSPACE.mkdir(exist_ok=True)

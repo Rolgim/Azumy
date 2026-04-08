@@ -1,12 +1,15 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 import re
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from utils import build_cmd, stream_command
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -64,9 +67,9 @@ async def retrieve_ws(ws: WebSocket):
 
         await ws.send_json({"type": "done", "downloaded": downloaded, "tile": tile_number})
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket disconnected")
     except Exception as e:
         try:
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
-            pass
+            logger.debug("WebSocket closed before sending error")
