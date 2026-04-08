@@ -1,6 +1,19 @@
-# Azulweb
+# Azulweb 🌌
 
-Web interface for [Azulero](https://github.com/kabasset/azulero) by A. Basset, a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-blue" />
+  <img src="https://img.shields.io/badge/FastAPI-0.135+-green" />
+  <img src="https://img.shields.io/badge/frontend-JavaScript-yellow" />
+  <img src="https://img.shields.io/badge/packaging-uv-purple" />
+  <img src="https://img.shields.io/badge/docker--compose-supported-blue" />
+  <img src="https://img.shields.io/badge/server-uvicorn-black" />
+  <img src="https://img.shields.io/badge/websocket-enabled-orange" />
+  <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
+</p>
+
+<p align="center">
+  Web interface for <a href="https://github.com/kabasset/azulero">Azulero</a> by A. Basset, a pipeline to produce color images from <a href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">Euclid</a> space telescope data.
+</p>
 
 <img width="1853" height="918" alt="image" src="https://github.com/user-attachments/assets/4c8c2e84-1b4f-4daf-b04c-00bb6eae1f49" />
 
@@ -49,7 +62,7 @@ Then open **http://localhost:8000** in your browser.
 - Click **▶ azul find** — found tiles appear as chips below the terminal
 - Select tiles and click **→ Send to Retrieve**
 
-The tiling GeoJSON for DR1 is available at:
+The tiling GeoJSON for DR1 is available at (Euclid consortium members only):
 ```
 https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCatalog.geojson
 ```
