@@ -17,6 +17,10 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
 
+uvicorn_logger = logging.getLogger("uvicorn")
+uvicorn_logger.handlers = logging.getLogger().handlers
+uvicorn_logger.setLevel(logging.INFO)
+
 app = FastAPI(
     title="Azulero GUI API",
     description="Backend for Azulweb - Azulero GUI (Euclid color images)",
