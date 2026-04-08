@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "ruff",
+    "mypy",
     "pre-commit",
 ]
 
@@ -35,3 +36,11 @@ ignore = []
 
 [tool.ruff.format]
 quote-style = "double"
+
+
+# ----------- MYPY -----------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+plugins = []
