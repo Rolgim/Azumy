@@ -11,7 +11,9 @@
   <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
 </p>
 
-Web interface for [Azulero](https://github.com/kabasset/azulero) by A. Basset, a pipeline to produce color images from [Euclid](https://www.esa.int/Science_Exploration/Space_Science/Euclid) space telescope data.
+<p align="center">
+  Web interface for <a href="https://github.com/kabasset/azulero">Azulero</a> by A. Basset, a pipeline to produce color images from <a href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">Euclid</a> space telescope data.
+</p>
 
 <img width="1853" height="918" alt="image" src="https://github.com/user-attachments/assets/4c8c2e84-1b4f-4daf-b04c-00bb6eae1f49" />
 
