@@ -37,7 +37,6 @@ async def retrieve_ws(ws: WebSocket):
         total_expected = len(req.tile_indices) * 4
         count = 0
 
-        heartbeat_started = False
         tile_number = None
 
         async for line in stream_command(cmd):
@@ -45,9 +44,6 @@ async def retrieve_ws(ws: WebSocket):
                 await ws.send_json({"type": "exit", "code": int(line[8:])})
             else:
                 await ws.send_json({"type": "log", "message": line})
-
-                if line.startswith("Download and extract"):
-                    heartbeat_started = True
 
                 m = re.search(r"-\s+\[([^\]]+)\]\s+(\S+)", line)
                 if m:
@@ -59,7 +55,7 @@ async def retrieve_ws(ws: WebSocket):
                     await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                     await ws.send_json({"type": "progress", "percent": pct})
 
-                # Catch tile number from lines like 
+                # Catch tile number from lines like
                 # "azul --workspace ... crop 123" or "azul --workspace ... process 123"
                 if "azul --workspace" in line and ("crop" in line or "process" in line):
                     match = re.search(r"(crop|process)\s+(\d+)", line)
@@ -72,5 +68,5 @@ async def retrieve_ws(ws: WebSocket):
     except Exception as e:
         try:
             await ws.send_json({"type": "error", "message": str(e)})
-        except:
+        except Exception:
             pass

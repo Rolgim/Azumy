@@ -169,5 +169,5 @@ async def process_ws(ws: WebSocket):
     except Exception as e:
         try:
             await ws.send_json({"type": "error", "message": str(e)})
-        except:
+        except Exception:
             pass
