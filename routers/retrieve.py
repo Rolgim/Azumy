@@ -59,7 +59,8 @@ async def retrieve_ws(ws: WebSocket):
                     await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                     await ws.send_json({"type": "progress", "percent": pct})
 
-                # Catch tile number from lines like "azul --workspace ... crop 123" or "azul --workspace ... process 123"
+                # Catch tile number from lines like 
+                # "azul --workspace ... crop 123" or "azul --workspace ... process 123"
                 if "azul --workspace" in line and ("crop" in line or "process" in line):
                     match = re.search(r"(crop|process)\s+(\d+)", line)
                     if match:

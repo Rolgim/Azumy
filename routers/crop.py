@@ -91,7 +91,8 @@ class CropSlicing(BaseModel):
 
 @router.post("/slicing")
 def compute_slicing(req: CropSlicing):
-    """Compute the slicing string for cropping the tile based on the requested coordinates and rounding."""
+    """Compute the slicing string for cropping the tile
+    based on the requested coordinates and rounding."""
     r = req.round
 
     x0 = math.floor(req.x0 / r) * r
