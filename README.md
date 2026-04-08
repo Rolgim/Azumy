@@ -1,6 +1,6 @@
 # Azulweb 🌌
 
-<p align="center">
+<p>
   <img src="https://img.shields.io/badge/Python-3.12-blue" />
   <img src="https://img.shields.io/badge/FastAPI-0.135+-green" />
   <img src="https://img.shields.io/badge/frontend-JavaScript-yellow" />
