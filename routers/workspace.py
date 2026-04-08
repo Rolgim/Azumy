@@ -3,6 +3,7 @@
 
 import logging
 from pathlib import Path
+from typing import Any, TypedDict
 
 from fastapi import APIRouter, HTTPException
 
@@ -11,8 +12,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+class WorkspaceInfo(TypedDict):
+    path: str
+    exists: bool
+    tiles: list[dict[str, Any]]
+    total_size_mb: float
+
+
 @router.get("/info")
-def info(path: str = "."):
+def info(path: str = ".") -> WorkspaceInfo:
     ws = Path(path).expanduser().resolve()
     if not ws.exists():
         return {"path": str(ws), "exists": False, "tiles": [], "total_size_mb": 0}
@@ -37,7 +45,7 @@ def info(path: str = "."):
 
 
 @router.get("/tile/{tile_index}/latest-image")
-def latest_image(tile_index: str, workspace: str = "."):
+def latest_image(tile_index: str, workspace: str = ".") -> dict[str, str]:
     tile_dir = Path(workspace).expanduser().resolve() / tile_index
     if not tile_dir.exists():
         raise HTTPException(404, "Tuile introuvable")

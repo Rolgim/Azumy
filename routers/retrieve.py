@@ -25,7 +25,7 @@ def _args(req: RetrieveReq) -> list[str]:
 
 
 @router.websocket("/ws")
-async def retrieve_ws(ws: WebSocket):
+async def retrieve_ws(ws: WebSocket) -> None:
     await ws.accept()
     try:
         req = RetrieveReq(**(await ws.receive_json()))

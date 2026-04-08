@@ -18,7 +18,7 @@ router = APIRouter()
 
 class FindReq(BaseModel):
     objects: list[str] = []
-    coordinates: list[dict] = []
+    coordinates: list[dict[str, float]] = []
     tiling: str = ""
 
 
@@ -31,7 +31,7 @@ def _args(req: FindReq) -> list[str]:
     return args
 
 
-def _parse_tile(line: str) -> dict | None:
+def _parse_tile(line: str) -> dict[str, str | float] | None:
     m = re.search(r"-\s+(\w+):\s+(\d+)\s+\(([^)]+)\);\s+distance:\s+([\d.]+)", line)
     if m:
         return {
@@ -44,7 +44,7 @@ def _parse_tile(line: str) -> dict | None:
 
 
 @router.websocket("/ws")
-async def find_ws(ws: WebSocket):
+async def find_ws(ws: WebSocket) -> None:
     await ws.accept()
     try:
         req = FindReq(**(await ws.receive_json()))
@@ -80,7 +80,7 @@ async def find_ws(ws: WebSocket):
 
 
 @router.post("/geojson")
-async def upload_geojson(file: UploadFile = File(...)):
+async def upload_geojson(file: UploadFile = File(...)) -> JSONResponse:
     """Receive a GeoJSON file and store it in workspace."""
     if not file.filename.lower().endswith(".geojson"):
         raise HTTPException(400, "Only .geojson files are allowed")
@@ -94,7 +94,7 @@ async def upload_geojson(file: UploadFile = File(...)):
 
 
 @router.get("/tiling")
-def get_tiling(filename: str):
+def get_tiling(filename: str) -> JSONResponse:
     """Return the list of tiles from a tiling GeoJSON file."""
     path = ws_path() / filename
     if not path.exists():

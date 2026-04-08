@@ -26,7 +26,7 @@ def _find_vis_file(workdir: Path, pattern: str = "EUC_MER_BGSUB-MOSAIC-VIS*") ->
 
 
 @router.get("/preview/{tile}")
-def crop_preview(tile: str, white: float = 1.0, downsample: int = 10):
+def crop_preview(tile: str, white: float = 1.0, downsample: int = 10) -> Response:
     """
     Generate a downsampled, stretched preview PNG from the VIS FITS file of the tile.
     """
@@ -93,7 +93,7 @@ class CropSlicing(BaseModel):
 
 
 @router.post("/slicing")
-def compute_slicing(req: CropSlicing):
+def compute_slicing(req: CropSlicing) -> dict[str, int | str]:
     """Compute the slicing string for cropping the tile
     based on the requested coordinates and rounding."""
     r = req.round

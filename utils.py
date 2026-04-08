@@ -30,7 +30,9 @@ async def stream_command(cmd: list[str], cwd: str | None = None) -> AsyncIterato
     yield f"__EXIT__{process.returncode}"
 
 
-def build_cmd(sub: str, args: list[str], flags: dict | None = None) -> list[str]:
+def build_cmd(
+    sub: str, args: list[str], flags: dict[str, str | int | bool] | None = None
+) -> list[str]:
     cmd = ["azul", "--workspace", str(WORKSPACE), sub]
     cmd.extend(args)
     if flags:

@@ -50,7 +50,7 @@ app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 
 @app.get("/health", tags=["Health"])
-def health():
+def health() -> dict[str, str]:
     """Check azulero installation."""
     import subprocess
 

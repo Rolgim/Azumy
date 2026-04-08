@@ -51,7 +51,7 @@ STEPS = [
 ]
 
 
-def _progress(line: str) -> dict | None:
+def _progress(line: str) -> dict[str, str | int] | None:
     """Detect progress step from log line."""
     low = line.lower()
     for keyword, pct in STEPS:
@@ -100,7 +100,7 @@ def generate_preview(input_file: str, size: int = 512) -> str:
 
 
 @router.websocket("/ws")
-async def process_ws(ws: WebSocket):
+async def process_ws(ws: WebSocket) -> None:
     await ws.accept()
 
     try:
