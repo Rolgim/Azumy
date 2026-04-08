@@ -1,6 +1,6 @@
 import asyncio
 import os
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 from pathlib import Path
 
 WORKSPACE = Path("workspace")
@@ -32,8 +32,10 @@ def build_cmd(sub: str, args: list[str], flags: dict | None = None) -> list[str]
     cmd.extend(args)
     if flags:
         for k, v in flags.items():
-            if v is True:                    cmd.append(k)
-            elif v not in (None, False, ""): cmd += [k, str(v)]
+            if v is True:
+                cmd.append(k)
+            elif v not in (None, False, ""):
+                cmd += [k, str(v)]
     return cmd
 
 

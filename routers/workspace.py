@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter, HTTPException
 from pathlib import Path
+
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 
@@ -20,13 +21,15 @@ def info(path: str = "."):
             total += size
             imgs = [f.name for f in files if f.suffix.lower() in (".jpg", ".jpeg", ".png")]
             vids = [f.name for f in files if f.suffix.lower() == ".mp4"]
-            tiles.append({
-                "index": item.name,
-                "fits_count": sum(1 for f in files if f.suffix.lower() in (".fits", ".fit")),
-                "images": imgs,
-                "videos": vids,
-                "size_mb": round(size / 1e6, 2),
-            })
+            tiles.append(
+                {
+                    "index": item.name,
+                    "fits_count": sum(1 for f in files if f.suffix.lower() in (".fits", ".fit")),
+                    "images": imgs,
+                    "videos": vids,
+                    "size_mb": round(size / 1e6, 2),
+                }
+            )
     return {"path": str(ws), "exists": True, "tiles": tiles, "total_size_mb": round(total / 1e6, 2)}
 
 

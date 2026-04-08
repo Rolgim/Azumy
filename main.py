@@ -3,12 +3,13 @@ Azulweb — Backend FastAPI
 Start with: uvicorn main:app --reload --port 8000
 """
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 
-from routers import find, workspace, retrieve, crop, process
+from routers import crop, find, process, retrieve, workspace
 
 app = FastAPI(
     title="Azulero GUI API",
@@ -18,7 +19,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,10 +27,10 @@ app.add_middleware(
 
 # Routers
 app.include_router(workspace.router, prefix="/workspace", tags=["Workspace"])
-app.include_router(find.router,      prefix="/find",      tags=["Find"])
+app.include_router(find.router, prefix="/find", tags=["Find"])
 app.include_router(retrieve.router, prefix="/retrieve", tags=["Retrieve"])
-app.include_router(crop.router,      prefix="/crop",      tags=["Crop"])
-app.include_router(process.router,   prefix="/process",   tags=["Process"])
+app.include_router(crop.router, prefix="/crop", tags=["Crop"])
+app.include_router(process.router, prefix="/process", tags=["Process"])
 
 # Serve images/videos
 outputs_dir = Path("workspace")
@@ -42,6 +43,7 @@ app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 def health():
     """Check azulero installation."""
     import subprocess
+
     try:
         result = subprocess.run(["azul", "--version"], capture_output=True, text=True, timeout=5)
         version = result.stdout.strip() or result.stderr.strip()

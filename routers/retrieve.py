@@ -1,10 +1,12 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import re
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-import re
-from utils import stream_command, build_cmd
+
+from utils import build_cmd, stream_command
 
 router = APIRouter()
 
@@ -36,7 +38,7 @@ async def retrieve_ws(ws: WebSocket):
         count = 0
 
         heartbeat_started = False
-        tile_number = None  
+        tile_number = None
 
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
@@ -50,11 +52,11 @@ async def retrieve_ws(ws: WebSocket):
                 m = re.search(r"-\s+\[([^\]]+)\]\s+(\S+)", line)
                 if m:
                     filter_name = m.group(1)
-                    filename    = m.group(2)
+                    filename = m.group(2)
                     downloaded.append({"filter": filter_name, "file": filename})
                     count += 1
                     pct = min(int(count / total_expected * 100), 99)
-                    await ws.send_json({"type": "file",     "filter": filter_name, "name": filename})
+                    await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                     await ws.send_json({"type": "progress", "percent": pct})
 
                 # Catch tile number from lines like "azul --workspace ... crop 123" or "azul --workspace ... process 123"
@@ -67,5 +69,7 @@ async def retrieve_ws(ws: WebSocket):
     except WebSocketDisconnect:
         pass
     except Exception as e:
-        try: await ws.send_json({"type": "error", "message": str(e)})
-        except: pass
+        try:
+            await ws.send_json({"type": "error", "message": str(e)})
+        except:
+            pass

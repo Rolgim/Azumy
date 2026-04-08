@@ -10,3 +10,26 @@ dependencies = [
     "websocket>=0.2.1",
     "websockets>=16.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pre-commit",
+]
+
+# ----------- RUFF -------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",  # erreurs Python
+    "F",  # bugs probables
+    "I",  # imports triés
+    "UP", # modernisation Python
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"

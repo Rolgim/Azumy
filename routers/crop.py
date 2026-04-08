@@ -1,13 +1,15 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import io as sysio
+import math
+from pathlib import Path
+
+import numpy as np
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
-import math
-import io as sysio
-import numpy as np
-from pathlib import Path
+
 from utils import ws_path
 
 router = APIRouter()
@@ -26,9 +28,10 @@ def crop_preview(tile: str, white: float = 1.0, downsample: int = 10):
     Generate a downsampled, stretched preview PNG from the VIS FITS file of the tile.
     """
     try:
-        from astropy.io import fits
         import matplotlib
-        matplotlib.use("Agg")   # No display needed
+        from astropy.io import fits
+
+        matplotlib.use("Agg")  # No display needed
         import matplotlib.pyplot as plt
     except ImportError as e:
         raise HTTPException(500, f"Missing dependency: {e}")
@@ -68,21 +71,21 @@ def crop_preview(tile: str, white: float = 1.0, downsample: int = 10):
         content=buf.read(),
         media_type="image/png",
         headers={
-            "X-Tile-Width":  str(w),
+            "X-Tile-Width": str(w),
             "X-Tile-Height": str(h),
             "Access-Control-Expose-Headers": "X-Tile-Width, X-Tile-Height",
-        }
+        },
     )
 
 
 class CropSlicing(BaseModel):
-    tile:  str
-    x0:    float
-    x1:    float
-    y0:    float
-    y1:    float
-    w:     int
-    h:     int
+    tile: str
+    x0: float
+    x1: float
+    y0: float
+    y1: float
+    w: int
+    h: int
     round: int = 500
 
 

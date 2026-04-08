@@ -1,13 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import re
+
+import pyvips
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-from typing import Optional
-import re
-import pyvips
 
-from utils import stream_command, build_cmd, ws_path
+from utils import build_cmd, stream_command, ws_path
 
 router = APIRouter()
 
@@ -48,7 +48,7 @@ STEPS = [
 ]
 
 
-def _progress(line: str) -> Optional[dict]:
+def _progress(line: str) -> dict | None:
     """Detect progress step from log line."""
     low = line.lower()
     for keyword, pct in STEPS:
@@ -90,7 +90,7 @@ def generate_preview(input_file: str, size: int = 512) -> str:
 
     preview_file = input_file.replace(".tiff", "_preview.jpg")
 
-    image = pyvips.Image.thumbnail(input_file, 512, size='both')  # generates a 512x512 preview
+    image = pyvips.Image.thumbnail(input_file, 512, size="both")  # generates a 512x512 preview
     image = image.cast("uchar")
     image.write_to_file(preview_file, Q=85)
     return preview_file
@@ -117,7 +117,6 @@ async def process_ws(ws: WebSocket):
 
         # Stream process output
         async for line in stream_command(cmd):
-
             if line.startswith("__EXIT__"):
                 code = int(line[8:])
                 await ws.send_json({"type": "exit", "code": code})
@@ -143,32 +142,26 @@ async def process_ws(ws: WebSocket):
         # Generate preview after processing completes
         if output_file:
             try:
-                await ws.send_json({
-                    "type": "progress",
-                    "label": "Generating preview",
-                    "percent": 98
-                })
+                await ws.send_json(
+                    {"type": "progress", "label": "Generating preview", "percent": 98}
+                )
 
                 preview_file = generate_preview(str(output_file))
                 preview_file_name = preview_file.split("/")[-1]
 
-                await ws.send_json({
-                    "type": "preview",
-                    "name": preview_file_name
-                })
+                await ws.send_json({"type": "preview", "name": preview_file_name})
 
             except Exception as e:
-                await ws.send_json({
-                    "type": "error",
-                    "message": f"Preview generation failed: {e}"
-                })
+                await ws.send_json({"type": "error", "message": f"Preview generation failed: {e}"})
 
         # Final message
-        await ws.send_json({
-            "type": "done",
-            "output_file": filename if output_file else None,
-            "preview_file": preview_file_name if preview_file else None,
-        })
+        await ws.send_json(
+            {
+                "type": "done",
+                "output_file": filename if output_file else None,
+                "preview_file": preview_file_name if preview_file else None,
+            }
+        )
 
     except WebSocketDisconnect:
         pass
