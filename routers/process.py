@@ -162,7 +162,7 @@ async def process_ws(ws: WebSocket) -> None:
                 await ws.send_json({"type": "error", "message": f"Preview generation failed: {e}"})
 
         # Final message
-        logger.debug(
+        logger.info(
             f"Sending done message with output_file={filename} and preview_file={preview_file}"
         )
         await ws.send_json(
@@ -177,8 +177,9 @@ async def process_ws(ws: WebSocket) -> None:
         logger.debug("WebSocket disconnected")
 
     except Exception as e:
+        logger.exception(f"Unhandled error in websocket: {e}")
+
         try:
-            logger.debug("Exception: %s", e)
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
             logger.debug("WebSocket closed before sending error")

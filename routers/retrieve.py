@@ -46,10 +46,9 @@ async def retrieve_ws(ws: WebSocket) -> None:
 
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
-                logger.debug("Command exited with code %s", line[8:])
+                logger.debug(f"Command exited with code {line[8:]}")
                 await ws.send_json({"type": "exit", "code": int(line[8:])})
             else:
-                logger.debug("Command output: %s", line)
                 await ws.send_json({"type": "log", "message": line})
 
                 m = re.search(r"-\s+\[([^\]]+)\]\s+(\S+)", line)
@@ -71,13 +70,16 @@ async def retrieve_ws(ws: WebSocket) -> None:
                         tile_number = match.group(2)
                         logger.debug("Tile number: %s", tile_number)
 
-        logger.debug("Command completed, sending done message")
+        logger.info(f"Command completed, sending done message for tile {tile_number}")
         await ws.send_json({"type": "done", "downloaded": downloaded, "tile": tile_number})
+
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected")
+
     except Exception as e:
+        logger.exception(f"Unhandled error in websocket: {e}")
+
         try:
-            logger.debug("Exception: %s", e)
-            await ws.send_json({"type": "error", "message": str(e)})
+            await ws.send_json({"type": "error", "message": "Internal server error"})
         except Exception:
             logger.debug("WebSocket closed before sending error")

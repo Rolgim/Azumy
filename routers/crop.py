@@ -37,12 +37,14 @@ def crop_preview(tile: str, white: float = 1.0, downsample: int = 10) -> Respons
         matplotlib.use("Agg")  # No display needed
         import matplotlib.pyplot as plt
     except ImportError as e:
+        logger.exception("Required libraries for preview generation are missing")
         raise HTTPException(500, f"Missing dependency: {e}")
 
     workdir = ws_path() / tile
     vis_file = _find_vis_file(workdir)
 
     with fits.open(vis_file, memmap=True) as hdul:
+        logger.info(f"Opened FITS file {vis_file} with {len(hdul)} HDUs")
         # Look for the first 2D image data in the FITS file
         data = None
         for hdu in hdul:
@@ -50,6 +52,7 @@ def crop_preview(tile: str, white: float = 1.0, downsample: int = 10) -> Respons
                 data = hdu.data.astype(np.float32)
                 break
         if data is None:
+            logger.error("No 2D image data found in FITS file")
             raise HTTPException(500, "No 2D image data found in FITS file")
 
     h, w = data.shape
@@ -70,6 +73,7 @@ def crop_preview(tile: str, white: float = 1.0, downsample: int = 10) -> Respons
     plt.close(fig)
     buf.seek(0)
 
+    logger.info(f"Generated preview for tile {tile}, size: {buf.getbuffer().nbytes} bytes")
     return Response(
         content=buf.read(),
         media_type="image/png",
@@ -104,4 +108,8 @@ def compute_slicing(req: CropSlicing) -> dict[str, int | str]:
     y1 = min(math.ceil(req.y1 / r) * r, req.h)
 
     slicing = f"{req.tile}[{y0}:{y1},{x0}:{x1}]"
+    logger.info(
+        f"Computed slicing for tile {req.tile}: ({req.x0}, {req.y0})-({req.x1}, {req.y1}) "
+        f"-> ({x0}, {y0})-({x1}, {y1}), slicing: {slicing}"
+    )
     return {"slicing": slicing, "x0": x0, "x1": x1, "y0": y0, "y1": y1}

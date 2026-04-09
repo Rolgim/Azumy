@@ -53,6 +53,7 @@ async def find_ws(ws: WebSocket) -> None:
             await ws.send_json(
                 {"type": "error", "message": "Provide at least one object or coordinates"}
             )
+            logger.debug("No objects or coordinates provided")
             return
 
         cmd = build_cmd("find", args)
@@ -61,6 +62,7 @@ async def find_ws(ws: WebSocket) -> None:
         seen = set()
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
+                logger.debug(f"Command exited with code {line[8:]}")
                 await ws.send_json({"type": "exit", "code": int(line[8:])})
             else:
                 await ws.send_json({"type": "log", "message": line})
@@ -69,10 +71,15 @@ async def find_ws(ws: WebSocket) -> None:
                     seen.add(t["index"])
                     await ws.send_json({"type": "tile", "data": t})
 
+        logger.info("Find command completed, total tiles found: %d", len(seen))
         await ws.send_json({"type": "done"})
+
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected")
+
     except Exception as e:
+        logger.exception(f"Unhandled error in websocket: {e}")
+
         try:
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
@@ -83,12 +90,15 @@ async def find_ws(ws: WebSocket) -> None:
 async def upload_geojson(file: UploadFile = File(...)) -> JSONResponse:
     """Receive a GeoJSON file and store it in workspace."""
     if not file.filename.lower().endswith(".geojson"):
+        logger.debug("Invalid file type: %s", file.filename)
         raise HTTPException(400, "Only .geojson files are allowed")
     path = ws_path() / file.filename
     try:
+        logger.debug("Saving uploaded file to %s", path)
         content = await file.read()
         path.write_bytes(content)
     except Exception as e:
+        logger.debug("Error saving file: %s", e)
         raise HTTPException(500, f"Could not save file: {e}")
     return JSONResponse({"filename": file.filename})
 
@@ -101,11 +111,14 @@ def get_tiling(filename: str) -> JSONResponse:
         # Look in current dir as fallback (for testing)
         from pathlib import Path
 
+        logger.debug(f"{filename} not found in workspace, checking current directory")
         path = Path(filename)
     if not path.exists():
+        logger.debug(f"{filename} not found in current directory either")
         raise HTTPException(404, f"{filename} unavailable in workspace or current directory")
 
     with open(path) as f:
+        logger.debug(f"Reading tiling file from {path}")
         data = json.load(f)
 
     tiles = []

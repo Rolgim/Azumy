@@ -16,6 +16,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
+logger = logging.getLogger(__name__)
 
 uvicorn_logger = logging.getLogger("uvicorn")
 uvicorn_logger.handlers = logging.getLogger().handlers
@@ -57,8 +58,11 @@ def health() -> dict[str, str]:
     try:
         result = subprocess.run(["azul", "--version"], capture_output=True, text=True, timeout=5)
         version = result.stdout.strip() or result.stderr.strip()
+        logger.info(f"Azulero version: {version}")
         return {"status": "ok", "azulero_version": version}
     except FileNotFoundError:
+        logger.warning("Azulero not found")
         return {"status": "error", "detail": "azulero not found — pip install azulero"}
     except Exception as e:
+        logger.exception("Unexpected error while checking azulero")
         return {"status": "error", "detail": str(e)}
