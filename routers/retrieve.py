@@ -30,10 +30,12 @@ async def retrieve_ws(ws: WebSocket) -> None:
     try:
         req = RetrieveReq(**(await ws.receive_json()))
         if not req.tile_indices:
+            logger.debug("No tile indices provided")
             await ws.send_json({"type": "error", "message": "No tile indices provided"})
             return
 
         cmd = build_cmd("retrieve", _args(req))
+        logger.debug("Running command: %s", " ".join(cmd))
         await ws.send_json({"type": "cmd", "message": " ".join(cmd)})
 
         downloaded = []
@@ -44,8 +46,10 @@ async def retrieve_ws(ws: WebSocket) -> None:
 
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
+                logger.debug("Command exited with code %s", line[8:])
                 await ws.send_json({"type": "exit", "code": int(line[8:])})
             else:
+                logger.debug("Command output: %s", line)
                 await ws.send_json({"type": "log", "message": line})
 
                 m = re.search(r"-\s+\[([^\]]+)\]\s+(\S+)", line)
@@ -55,6 +59,7 @@ async def retrieve_ws(ws: WebSocket) -> None:
                     downloaded.append({"filter": filter_name, "file": filename})
                     count += 1
                     pct = min(int(count / total_expected * 100), 99)
+                    logger.debug("Downloaded %s, progress: %d%%", filename, pct)
                     await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                     await ws.send_json({"type": "progress", "percent": pct})
 
@@ -64,12 +69,15 @@ async def retrieve_ws(ws: WebSocket) -> None:
                     match = re.search(r"(crop|process)\s+(\d+)", line)
                     if match:
                         tile_number = match.group(2)
+                        logger.debug("Tile number: %s", tile_number)
 
+        logger.debug("Command completed, sending done message")
         await ws.send_json({"type": "done", "downloaded": downloaded, "tile": tile_number})
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected")
     except Exception as e:
         try:
+            logger.debug("Exception: %s", e)
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
             logger.debug("WebSocket closed before sending error")
