@@ -1,13 +1,16 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
+import re
+
+import pyvips
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-from typing import Optional
-import re
-import pyvips
 
-from utils import stream_command, build_cmd, ws_path
+from utils import build_cmd, stream_command, ws_path
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -48,7 +51,7 @@ STEPS = [
 ]
 
 
-def _progress(line: str) -> Optional[dict]:
+def _progress(line: str) -> dict[str, str | int] | None:
     """Detect progress step from log line."""
     low = line.lower()
     for keyword, pct in STEPS:
@@ -90,14 +93,14 @@ def generate_preview(input_file: str, size: int = 512) -> str:
 
     preview_file = input_file.replace(".tiff", "_preview.jpg")
 
-    image = pyvips.Image.thumbnail(input_file, 512, size='both')  # generates a 512x512 preview
+    image = pyvips.Image.thumbnail(input_file, 512, size="both")  # generates a 512x512 preview
     image = image.cast("uchar")
     image.write_to_file(preview_file, Q=85)
     return preview_file
 
 
 @router.websocket("/ws")
-async def process_ws(ws: WebSocket):
+async def process_ws(ws: WebSocket) -> None:
     await ws.accept()
 
     try:
@@ -117,9 +120,9 @@ async def process_ws(ws: WebSocket):
 
         # Stream process output
         async for line in stream_command(cmd):
-
             if line.startswith("__EXIT__"):
                 code = int(line[8:])
+                logger.debug(f"Process exited with code {code}")
                 await ws.send_json({"type": "exit", "code": code})
                 continue
 
@@ -138,43 +141,45 @@ async def process_ws(ws: WebSocket):
                 filename = m.group(1)
                 tile_number = req.tile.split("[")[0]  # e.g., "102160242"
                 output_file = ws_path() / tile_number / filename
+                logger.debug(f"Output file: {output_file}")
                 await ws.send_json({"type": "output_file", "name": filename})
 
         # Generate preview after processing completes
         if output_file:
             try:
-                await ws.send_json({
-                    "type": "progress",
-                    "label": "Generating preview",
-                    "percent": 98
-                })
+                logger.debug(f"Generating preview for {filename}")
+                await ws.send_json(
+                    {"type": "progress", "label": "Generating preview", "percent": 98}
+                )
 
                 preview_file = generate_preview(str(output_file))
                 preview_file_name = preview_file.split("/")[-1]
 
-                await ws.send_json({
-                    "type": "preview",
-                    "name": preview_file_name
-                })
+                await ws.send_json({"type": "preview", "name": preview_file_name})
 
             except Exception as e:
-                await ws.send_json({
-                    "type": "error",
-                    "message": f"Preview generation failed: {e}"
-                })
+                logger.debug(f"Preview generation failed: {e}")
+                await ws.send_json({"type": "error", "message": f"Preview generation failed: {e}"})
 
         # Final message
-        await ws.send_json({
-            "type": "done",
-            "output_file": filename if output_file else None,
-            "preview_file": preview_file_name if preview_file else None,
-        })
+        logger.info(
+            f"Sending done message with output_file={filename} and preview_file={preview_file}"
+        )
+        await ws.send_json(
+            {
+                "type": "done",
+                "output_file": filename if output_file else None,
+                "preview_file": preview_file_name if preview_file else None,
+            }
+        )
 
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket disconnected")
 
     except Exception as e:
+        logger.exception(f"Unhandled error in websocket: {e}")
+
         try:
             await ws.send_json({"type": "error", "message": str(e)})
-        except:
-            pass
+        except Exception:
+            logger.debug("WebSocket closed before sending error")

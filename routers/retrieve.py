@@ -1,10 +1,15 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
+import re
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-import re
-from utils import stream_command, build_cmd
+
+from utils import build_cmd, stream_command
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -20,52 +25,61 @@ def _args(req: RetrieveReq) -> list[str]:
 
 
 @router.websocket("/ws")
-async def retrieve_ws(ws: WebSocket):
+async def retrieve_ws(ws: WebSocket) -> None:
     await ws.accept()
     try:
         req = RetrieveReq(**(await ws.receive_json()))
         if not req.tile_indices:
+            logger.debug("No tile indices provided")
             await ws.send_json({"type": "error", "message": "No tile indices provided"})
             return
 
         cmd = build_cmd("retrieve", _args(req))
+        logger.debug("Running command: %s", " ".join(cmd))
         await ws.send_json({"type": "cmd", "message": " ".join(cmd)})
 
         downloaded = []
         total_expected = len(req.tile_indices) * 4
         count = 0
 
-        heartbeat_started = False
-        tile_number = None  
+        tile_number = None
 
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
+                logger.debug(f"Command exited with code {line[8:]}")
                 await ws.send_json({"type": "exit", "code": int(line[8:])})
             else:
                 await ws.send_json({"type": "log", "message": line})
 
-                if line.startswith("Download and extract"):
-                    heartbeat_started = True
-
                 m = re.search(r"-\s+\[([^\]]+)\]\s+(\S+)", line)
                 if m:
                     filter_name = m.group(1)
-                    filename    = m.group(2)
+                    filename = m.group(2)
                     downloaded.append({"filter": filter_name, "file": filename})
                     count += 1
                     pct = min(int(count / total_expected * 100), 99)
-                    await ws.send_json({"type": "file",     "filter": filter_name, "name": filename})
+                    logger.debug("Downloaded %s, progress: %d%%", filename, pct)
+                    await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                     await ws.send_json({"type": "progress", "percent": pct})
 
-                # Catch tile number from lines like "azul --workspace ... crop 123" or "azul --workspace ... process 123"
+                # Catch tile number from lines like
+                # "azul --workspace ... crop 123" or "azul --workspace ... process 123"
                 if "azul --workspace" in line and ("crop" in line or "process" in line):
                     match = re.search(r"(crop|process)\s+(\d+)", line)
                     if match:
                         tile_number = match.group(2)
+                        logger.debug("Tile number: %s", tile_number)
 
+        logger.info(f"Command completed, sending done message for tile {tile_number}")
         await ws.send_json({"type": "done", "downloaded": downloaded, "tile": tile_number})
+
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket disconnected")
+
     except Exception as e:
-        try: await ws.send_json({"type": "error", "message": str(e)})
-        except: pass
+        logger.exception(f"Unhandled error in websocket: {e}")
+
+        try:
+            await ws.send_json({"type": "error", "message": "Internal server error"})
+        except Exception:
+            logger.debug("WebSocket closed before sending error")
