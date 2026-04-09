@@ -23,6 +23,7 @@ class WorkspaceInfo(TypedDict):
 def info(path: str = ".") -> WorkspaceInfo:
     ws = Path(path).expanduser().resolve()
     if not ws.exists():
+        logger.debug("Workspace does not exist: %s", ws)
         return {"path": str(ws), "exists": False, "tiles": [], "total_size_mb": 0}
     tiles, total = [], 0
     for item in sorted(ws.iterdir()):
@@ -41,16 +42,24 @@ def info(path: str = ".") -> WorkspaceInfo:
                     "size_mb": round(size / 1e6, 2),
                 }
             )
-    return {"path": str(ws), "exists": True, "tiles": tiles, "total_size_mb": round(total / 1e6, 2)}
+    logger.info(f"Scanned workspace {ws}: {len(tiles)}tiles, {(total / 1e6)} MB")
+    return {
+        "path": str(ws),
+        "exists": True,
+        "tiles": tiles,
+        "total_size_mb": round(total / 1e6, 2),
+    }
 
 
 @router.get("/tile/{tile_index}/latest-image")
 def latest_image(tile_index: str, workspace: str = ".") -> dict[str, str]:
     tile_dir = Path(workspace).expanduser().resolve() / tile_index
     if not tile_dir.exists():
-        raise HTTPException(404, "Tuile introuvable")
+        logger.debug("Tile not found: %s", tile_dir)
+        raise HTTPException(404, "Tile not found")
     imgs = sorted(tile_dir.glob("*.jpg")) + sorted(tile_dir.glob("*.png"))
     if not imgs:
-        raise HTTPException(404, "Aucune image")
+        logger.debug("No image found for tile: %s", tile_dir)
+        raise HTTPException(404, "No image")
     latest = max(imgs, key=lambda p: p.stat().st_mtime)
     return {"url": f"/outputs/{tile_index}/{latest.name}", "name": latest.name}
