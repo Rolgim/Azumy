@@ -122,6 +122,7 @@ async def process_ws(ws: WebSocket) -> None:
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
                 code = int(line[8:])
+                logger.debug(f"Process exited with code {code}")
                 await ws.send_json({"type": "exit", "code": code})
                 continue
 
@@ -140,11 +141,13 @@ async def process_ws(ws: WebSocket) -> None:
                 filename = m.group(1)
                 tile_number = req.tile.split("[")[0]  # e.g., "102160242"
                 output_file = ws_path() / tile_number / filename
+                logger.debug(f"Output file: {output_file}")
                 await ws.send_json({"type": "output_file", "name": filename})
 
         # Generate preview after processing completes
         if output_file:
             try:
+                logger.debug(f"Generating preview for {filename}")
                 await ws.send_json(
                     {"type": "progress", "label": "Generating preview", "percent": 98}
                 )
@@ -155,9 +158,13 @@ async def process_ws(ws: WebSocket) -> None:
                 await ws.send_json({"type": "preview", "name": preview_file_name})
 
             except Exception as e:
+                logger.debug(f"Preview generation failed: {e}")
                 await ws.send_json({"type": "error", "message": f"Preview generation failed: {e}"})
 
         # Final message
+        logger.debug(
+            f"Sending done message with output_file={filename} and preview_file={preview_file}"
+        )
         await ws.send_json(
             {
                 "type": "done",
@@ -171,6 +178,7 @@ async def process_ws(ws: WebSocket) -> None:
 
     except Exception as e:
         try:
+            logger.debug("Exception: %s", e)
             await ws.send_json({"type": "error", "message": str(e)})
         except Exception:
             logger.debug("WebSocket closed before sending error")
