@@ -54,6 +54,15 @@ ignore_errors = true
 
 # ----------- PYTEST ---------
 [tool.pytest.ini_options]
+addopts = "--cov=. --cov-report=term-missing --cov-report=xml"
 testpaths = ["tests"]
 asyncio_mode = "auto"
-addopts = "--cov=. --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests/*",
+    "frontend/*",
+    "venv/*",
+    ".venv/*",
+]
