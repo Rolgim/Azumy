@@ -5,3 +5,10 @@ __pycache__/
 .venv/
 *.geojson
 .env
+# Coverage reports
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover

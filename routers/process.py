@@ -120,6 +120,8 @@ async def process_ws(ws: WebSocket) -> None:
 
         # Stream process output
         async for line in stream_command(cmd):
+            filename = None
+
             if line.startswith("__EXIT__"):
                 code = int(line[8:])
                 logger.debug(f"Process exited with code {code}")
