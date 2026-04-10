@@ -43,6 +43,7 @@ async def retrieve_ws(ws: WebSocket) -> None:
         count = 0
 
         tile_number = None
+        seen_tiles = set()
 
         async for line in stream_command(cmd):
             if line.startswith("__EXIT__"):
@@ -62,16 +63,22 @@ async def retrieve_ws(ws: WebSocket) -> None:
                     await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                     await ws.send_json({"type": "progress", "percent": pct})
 
-                # Catch tile number from lines like
-                # "azul --workspace ... crop 123" or "azul --workspace ... process 123"
+                # Catch tile number from lines like "azul --workspace ... process 123"
                 if "azul --workspace" in line and ("crop" in line or "process" in line):
                     match = re.search(r"(crop|process)\s+(\d+)", line)
                     if match:
-                        tile_number = match.group(2)
-                        logger.debug("Tile number: %s", tile_number)
+                        tile_id = match.group(2)
+                        # Only send tile message the first time we see a tile_id,
+                        # to avoid duplicates if multiple files are downloaded for the same tile,
+                        # ie not for the set but the websocket
+                        if tile_id not in seen_tiles:
+                            seen_tiles.add(tile_id)
+                            tile_number = tile_id
+                            logger.debug("Tile number: %s", tile_number)
+                            await ws.send_json({"type": "tile", "index": tile_id})
 
-        logger.info(f"Command completed, sending done message for tile {tile_number}")
-        await ws.send_json({"type": "done", "downloaded": downloaded, "tile": tile_number})
+        logger.info(f"Command completed, sending done message for tiles {seen_tiles}")
+        await ws.send_json({"type": "done", "downloaded": downloaded, "tiles": list(seen_tiles)})
 
     except WebSocketDisconnect:
         logger.debug("WebSocket disconnected")

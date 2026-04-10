@@ -77,14 +77,16 @@ export function runRetrieve() {
       stopHeartbeat();
       if (m.code !== 0) termLine('Retrieve', 'c-err', `exit ${m.code}`);
     },
+    tile: m => {
+      const tileIndex = m.index;
+      retrievedTiles.push(tileIndex);
+      addTileChip({ index: tileIndex });
+      document.getElementById('sendCrop').style.display = 'block';
+    },
     done: m => {
       stopHeartbeat();
       progSet('Retrieve', 100);
       btn.disabled = false;
-      const tileIndex = m.tile;
-      retrievedTiles.push(tileIndex);
-      addTileChip({ index: tileIndex });
-      document.getElementById('sendCrop').style.display = 'block';
     },
     error: m => {
       stopHeartbeat();
