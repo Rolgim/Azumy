@@ -56,7 +56,4 @@ ignore_errors = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-addopts = "--cov=azulweb --cov-report=term-missing"
-
-[tool.coverage.run]
-source = ["azulweb"]
+addopts = "--cov=. --cov-report=term-missing"
