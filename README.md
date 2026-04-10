@@ -5,6 +5,8 @@
   <img src="https://img.shields.io/badge/frontend-JavaScript-yellow" />
   <img src="https://img.shields.io/badge/packaging-uv-purple" />
   <img src="https://img.shields.io/badge/docker--compose-supported-blue" />
+  <img src="https://github.com/Rolgim/Azulweb/actions/workflows/tests.yml/badge.svg"" />
+  <img src="https://codecov.io/github/Rolgim/Azulweb/branch/develop/graph/badge.svg?token=OJ0GPTA88F"/> 
   <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
 </p>
 
