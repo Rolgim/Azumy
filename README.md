@@ -6,7 +6,6 @@
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" />
 
   <img src="https://img.shields.io/badge/mypy-checked-blue" />
-  <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" />
   <img src="https://img.shields.io/badge/packaging-uv-purple" />
 
   <img src="https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=white" />
