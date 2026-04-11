@@ -143,6 +143,7 @@ rm .env secrets/netrc
 
 ## Credits
 
-- [Azulero](https://github.com/kabasset/azulero) — Antoine Basset (CNES) et al.
-- [Aladin Lite](https://aladin.cds.unistra.fr/AladinLite/) — CDS Strasbourg
-- Image data — ESA Euclid / Euclid Consortium / NASA
+- [Azulero](https://github.com/kabasset/azulero) - Antoine Basset (CNES) et al.
+- [Eummy](https://github.com/schirmermischa/eummy) - Mischa Schirmer
+- [Aladin Lite](https://aladin.cds.unistra.fr/AladinLite/) - CDS Strasbourg
+- Image data - ESA Euclid / Euclid Consortium / NASA
