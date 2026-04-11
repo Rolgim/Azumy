@@ -97,6 +97,7 @@ class EummyProcessReq(BaseModel):
     blend_iy: bool = False
     fi: float = 1.6
     output: str = "TILE[id].tif"
+    slicing: str | None = None  # e.g. "[100:500,200:600]"
 
 
 EUMMY_STEPS = [
@@ -138,6 +139,15 @@ def _eummy_args(req: EummyProcessReq, tile_dir: Path) -> list[str]:
     if req.blend_iy:
         args.append("--blendIY")
         args += ["--fi", str(req.fi)]
+
+    slicing_match = re.match(r"\[(\d+):(\d+),(\d+):(\d+)\]", req.slicing or "")
+    if slicing_match:
+        y0, y1, x0, x1 = map(int, slicing_match.groups())
+        col_c = (x0 + x1) // 2
+        row_c = (y0 + y1) // 2
+        w = x1 - x0
+        h = y1 - y0
+        args += ["--cutout", str(col_c), str(row_c), f"{w}p", f"{h}p"]
 
     args += ["--output", req.output]
     return args

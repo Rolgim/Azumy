@@ -75,10 +75,13 @@ function buildPayload(tile) {
       saturation: flt('procSaturation'),
     };
   } else {
-    const contrast = $('eummyContrast').value.trim();
+    const contrast      = $('eummyContrast').value.trim();
+    const tileNum       = tile.split('[')[0];
+    const slicingMatch  = tile.match(/(\[\d+:\d+,\d+:\d+\])/);
     return {
       engine:     'eummy',
-      tile:       tile.split('[')[0],
+      tile:       tileNum,
+      slicing:    slicingMatch ? slicingMatch[1] : null,
       blackwhite: lst('eummyBlackwhite'),
       pivot:      flt('eummyPivot'),
       contrast:   contrast ? parseFloat(contrast) : null,
