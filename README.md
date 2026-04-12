@@ -16,7 +16,8 @@
   Web interface for <a href="https://github.com/kabasset/azulero">Azulero</a> by A. Basset and <a href="https://github.com/schirmermischa/eummy">Eummy</a> by M. Schirmer - two pipelines designed to produce color images from <a href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">Euclid</a> space telescope data.
 </p>
 
-<img width="1853" height="918" alt="image" src="https://github.com/user-attachments/assets/4c8c2e84-1b4f-4daf-b04c-00bb6eae1f49" />
+<img width="1856" height="960" alt="image" src="https://github.com/user-attachments/assets/fd352cfb-cf5f-46f8-8c75-677ad0445475" />
+
 
 ## Overview
 
