@@ -52,7 +52,7 @@ header {
   top: 0; left: 0; right: 0;
   height: 2px;
   background: linear-gradient(90deg,
-    #e63946, #f4791f, #f5c842, #4dbd5e, #3d9be9, #7b5ea7);
+   #580840, #9331b1, #8066be,#7388e6,#3d9be9, #3d3b9c);
 }
 
 h2 {
