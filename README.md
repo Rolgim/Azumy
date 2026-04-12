@@ -1,4 +1,6 @@
-# Azumy 🌌
+<p align="center">
+  <img width="617" height="308" alt="image" src="https://github.com/Rolgim/Azumy/blob/develop/frontend/img/azumy.png?raw=true" />
+</p>
 
 <p align="center">
   <img src="https://github.com/Rolgim/Azulweb/actions/workflows/tests.yml/badge.svg" />
@@ -12,22 +14,28 @@
   <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
 </p>
 
+
 <p align="center">
   Web interface for <a href="https://github.com/kabasset/azulero">Azulero</a> by A. Basset and <a href="https://github.com/schirmermischa/eummy">Eummy</a> by M. Schirmer - two pipelines designed to produce color images from <a href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">Euclid</a> space telescope data.
 </p>
 
-<img width="1852" height="925" alt="image" src="https://github.com/user-attachments/assets/5c1275a9-6cc3-42f9-a44d-25d4dd78e8d4" />
-
 ## Overview
 
-Azulweb wraps the `azul` command-line pipeline into a browser-based interface. It covers the full workflow:
-
+Azumy wraps the `azul` and `eummy` command-line pipelines into a browser-based interface. It covers the full workflow:
+<div align="center">
+  
 | Step | Command | Description |
 |------|---------|-------------|
 | **Find** | `azul find` | Locate tile indices from object names or sky coordinates |
 | **Retrieve** | `azul retrieve` | Download MER FITS files from ESA archives |
 | **Crop** | `azul crop` | Visually select a region of interest on the VIS channel |
 | **Process** | `azul process` or `eummy` | Render a color sRGB image from IYJH channels |
+
+</div>
+
+Screenshot of the interface:
+<img width="1852" height="931" alt="image" src="https://github.com/user-attachments/assets/ffd311ff-6221-4087-a194-5e66a3c0132f" />
+
 
 ## Requirements
 
