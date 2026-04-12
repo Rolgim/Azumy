@@ -52,7 +52,7 @@ header {
   top: 0; left: 0; right: 0;
   height: 2px;
   background: linear-gradient(90deg,
-    #e63946, #f4791f, #f5c842, #4dbd5e, #3d9be9, #7b5ea7);
+   #580840, #9331b1, #8066be,#7388e6,#3d9be9, #3d3b9c);
 }
 
 h2 {
@@ -191,3 +191,32 @@ button.primary:hover {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #04080f; }
 ::-webkit-scrollbar-thumb { background: #1a3a6a; border-radius: 3px; }
+
+/* ── Engine switch ── */
+.engine-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.engine-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #07111f;
+  border: 1px solid #0f2040;
+  border-radius: 4px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: border-color .15s;
+}
+.engine-option:has(input:checked) {
+  border-color: #3d85f5;
+  color: #3d85f5;
+}
+.engine-option input[type="radio"] {
+  width: auto;
+  margin: 0;
+  accent-color: #3d85f5;
+}
+ 
