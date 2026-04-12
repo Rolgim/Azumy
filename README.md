@@ -1,4 +1,4 @@
-# Azummy 🌌
+# Azumy 🌌
 
 <p align="center">
   <img src="https://github.com/Rolgim/Azulweb/actions/workflows/tests.yml/badge.svg" />
