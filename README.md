@@ -1,17 +1,17 @@
 <p align="center">
-  <img width="617" height="308" alt="image" src="https://github.com/Rolgim/Azumy/blob/develop/frontend/img/azumy.png?raw=true" />
+  <img width="50%" height="50%" alt="image" src="https://github.com/Rolgim/Azumy/blob/develop/frontend/img/azumy.png?raw=true" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Rolgim/Azulweb/actions/workflows/tests.yml/badge.svg" />
-  <img src="https://codecov.io/github/Rolgim/Azulweb/branch/develop/graph/badge.svg?token=OJ0GPTA88F"/> 
+  <img src="https://github.com/Rolgim/Azumy/actions/workflows/tests.yml/badge.svg" />
+  <img src="https://codecov.io/github/Rolgim/Azumy/branch/main/graph/badge.svg?token=OJ0GPTA88F"/> 
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" />
 
   <img src="https://img.shields.io/badge/mypy-checked-blue" />
   <img src="https://img.shields.io/badge/packaging-uv-purple" />
 
   <img src="https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=white" />
-  <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
+  <img src="https://img.shields.io/github/license/Rolgim/Azumy" />
 </p>
 
 
@@ -46,8 +46,8 @@ Screenshot of the interface:
 ## Quick start
 
 ```bash
-git clone https://github.com/Rolgim/Azulweb.git
-cd Azulweb
+git clone https://github.com/Rolgim/Azumy.git
+cd Azumy
 chmod +x run.sh
 ./run.sh
 ```
@@ -100,7 +100,7 @@ https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCata
 ## Project structure
 
 ```
-Azulweb/
+Azumy/
 ├── main.py              # FastAPI app
 ├── utils.py             # Shared utilities (stream_command, build_cmd)
 ├── routers/
