@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="617" height="308" alt="image" src="https://github.com/Rolgim/Azumy/blob/develop/frontend/img/azumy.png?raw=true" />
+  <img width="50%" height="50%" alt="image" src="https://github.com/Rolgim/Azumy/blob/develop/frontend/img/azumy.png?raw=true" />
 </p>
 
 <p align="center">
