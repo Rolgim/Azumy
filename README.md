@@ -4,7 +4,7 @@
 
 <p align="center">
   <img src="https://github.com/Rolgim/Azumy/actions/workflows/tests.yml/badge.svg" />
-  <img src="https://codecov.io/github/Rolgim/Azumy/branch/develop/graph/badge.svg?token=OJ0GPTA88F"/> 
+  <img src="https://codecov.io/github/Rolgim/Azumy/branch/main/graph/badge.svg?token=OJ0GPTA88F"/> 
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" />
 
   <img src="https://img.shields.io/badge/mypy-checked-blue" />
