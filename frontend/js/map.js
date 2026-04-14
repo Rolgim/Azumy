@@ -11,6 +11,8 @@ import { API } from './websocket.js';
 let aladin      = null;
 let markerLayer = null;
 let tilingOverlay = null;
+let circleOverlay = null;
+let firstClick = null;
 
 export async function initMap(containerId) {
   await loadAladinScript();
@@ -33,12 +35,50 @@ export async function initMap(containerId) {
   markerLayer = A.catalog({ shape: 'circle', color: '#4ec9b0', sourceSize: 12 });
   aladin.addCatalog(markerLayer);
 
+  // overlay cercle
+  circleOverlay = A.graphicOverlay({ color: '#8066be', lineWidth: 2 });
+  aladin.addOverlay(circleOverlay);
+
   aladin.on('click', (raOrObj, decArg) => {
     const ra  = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.ra  : raOrObj;
     const dec = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.dec : decArg;
     if (ra == null || dec == null) return;
-    placeMarker(ra, dec);
-    document.dispatchEvent(new CustomEvent('sky:select', { detail: { ra, dec } }));
+
+    // 1st clic  -> position
+    if (!firstClick) {
+      firstClick = { ra, dec };
+
+      placeMarker(ra, dec);
+      circleOverlay.removeAll();
+
+      document.dispatchEvent(new CustomEvent('sky:select', {
+        detail: { ra, dec }
+      }));
+
+      return;
+    }
+
+    // 2nd clic → radius
+    const radius = angularDistance(
+      firstClick.ra,
+      firstClick.dec,
+      ra,
+      dec
+    );
+
+    drawCircle(firstClick.ra, firstClick.dec, radius);
+    console.log(radius);
+
+    document.dispatchEvent(new CustomEvent('sky:region', {
+      detail: {
+        ra: firstClick.ra,
+        dec: firstClick.dec,
+        radius
+      }
+    }));
+
+    // reset
+    firstClick = null;
   });
 }
 
@@ -51,10 +91,54 @@ export function goTo(ra, dec) {
   if (!aladin) return;
   aladin.gotoRaDec(ra, dec);
   placeMarker(ra, dec);
+
+  // reset selection
+  firstClick = null;
+  if (circleOverlay) circleOverlay.removeAll();
 }
 
 /**
- * Load tiling polygons from the backend and display them as an overlay on the map.
+ * Draw circle (polygon approximation)
+ */
+function drawCircle(ra, dec, radiusDeg) {
+  const points = [];
+  const steps = 64;
+
+  const decRad = dec * Math.PI / 180;
+
+  for (let i = 0; i < steps; i++) {
+    const angle = (i / steps) * 2 * Math.PI;
+
+    const dRa  = (radiusDeg * Math.cos(angle)) / Math.cos(decRad);
+    const dDec = radiusDeg * Math.sin(angle);
+
+    points.push([ra + dRa, dec + dDec]);
+  }
+
+  circleOverlay.removeAll();
+  circleOverlay.add(A.polygon(points));
+}
+
+/**
+ * Angular distance (deg)
+ */
+function angularDistance(ra1, dec1, ra2, dec2) {
+  const toRad = d => d * Math.PI / 180;
+
+  const r1 = toRad(ra1);
+  const d1 = toRad(dec1);
+  const r2 = toRad(ra2);
+  const d2 = toRad(dec2);
+
+  const cos =
+    Math.sin(d1) * Math.sin(d2) +
+    Math.cos(d1) * Math.cos(d2) * Math.cos(r1 - r2);
+
+  return Math.acos(Math.min(1, cos)) * 180 / Math.PI;
+}
+
+/**
+ * Load tiling polygons from the backend
  */
 export async function loadTiling(filename) {
   if (!aladin || !filename) return;
