@@ -24,6 +24,7 @@ export async function initMap(containerId) {
     target:                '0 0',
     cooFrame:              'ICRSd',
     showReticle:           false,
+    showProjectionControl: false,
     showZoomControl:       true,
     showFullscreenControl: true,
     showLayersControl:     true,
