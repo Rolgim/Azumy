@@ -42,6 +42,23 @@ export async function initMap(containerId) {
   aladin.addOverlay(previewOverlay);
 
   // Clic
+  // doule clic → no radius
+aladin.on('dblclick', () => {
+  if (!firstClick) return;
+
+  previewOverlay.removeAll();
+
+  document.dispatchEvent(new CustomEvent('sky:region', {
+    detail: {
+      ra: firstClick.ra,
+      dec: firstClick.dec,
+      radius: null
+    }
+  }));
+
+  firstClick = null;
+});
+
   aladin.on('click', (raOrObj, decArg) => {
     const ra  = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.ra  : raOrObj;
     const dec = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.dec : decArg;
