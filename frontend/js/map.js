@@ -130,7 +130,9 @@ function drawCircleOn(overlay, ra, dec, radiusDeg, steps = 64) {
 }
 
 export function drawCircle(ra, dec, radius) {
-  if (!aladin || !circleOverlay || radius == null) return;
+  if (!aladin || !circleOverlay) return;
+  circleOverlay.removeAll();
+  if (radius == null) return;
   drawCircleOn(circleOverlay, ra, dec, radius);
 }
 

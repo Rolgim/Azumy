@@ -91,8 +91,7 @@ function syncFieldsToMap() {
   selectedRa = ra; selectedDec = dec;
   goTo(ra, dec);
   const radius = parseFloat(document.getElementById('findRadius').value);
-  if (isNaN(radius)) return ;
-  selectedRadius = radius;
+  selectedRadius = isNaN(radius) ? null : radius;
   drawCircle(ra, dec, selectedRadius);
 }
 
