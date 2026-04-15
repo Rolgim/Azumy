@@ -282,6 +282,7 @@ button.primary:hover {
   color: #3d85f5;
   text-transform: uppercase;
   letter-spacing: .15em;
+  margin-top: 16px;
   margin-bottom: 16px;
 
   display: flex;
