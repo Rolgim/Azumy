@@ -11,8 +11,9 @@ let aladin         = null;
 let markerLayer    = null;
 let tilingOverlay  = null;
 let circleOverlay  = null;
-let previewOverlay = null;   // cercle de preview (mousemove)
+let previewOverlay = null;
 let firstClick     = null;
+
 
 export async function initMap(containerId) {
   await loadAladinScript();
@@ -42,24 +43,8 @@ export async function initMap(containerId) {
   aladin.addOverlay(previewOverlay);
 
   // Clic
-  // doule clic → no radius
-aladin.on('dblclick', () => {
-  if (!firstClick) return;
-
-  previewOverlay.removeAll();
-
-  document.dispatchEvent(new CustomEvent('sky:region', {
-    detail: {
-      ra: firstClick.ra,
-      dec: firstClick.dec,
-      radius: null
-    }
-  }));
-
-  firstClick = null;
-});
-
   aladin.on('click', (raOrObj, decArg) => {
+
     const ra  = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.ra  : raOrObj;
     const dec = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.dec : decArg;
     if (ra == null || dec == null) return;
