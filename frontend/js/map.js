@@ -29,9 +29,9 @@ export async function initMap(containerId) {
     showZoomControl:       true,
     showFullscreenControl: true,
     showLayersControl:     true,
-    showGotoControl:       true,
+    showGotoControl:       false,
     showShareControl:      true,
-    showCooLocation:       true,
+    showCooLocation:       false,
   });
 
   markerLayer = A.catalog({ shape: 'circle', color: '#4ec9b0', sourceSize: 12 });

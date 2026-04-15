@@ -96,7 +96,7 @@ function syncFieldsToMap() {
 }
 
 export function runFind() {
-  termClear('Find');
+  termClear('Global');
   document.getElementById('tilesResult').innerHTML = '';
   document.getElementById('sendRetrieve').style.display = 'none';
   foundTiles = []; selectedTiles = [];
@@ -118,9 +118,9 @@ export function runFind() {
   let progress = 0;
 
   openWS('/find/ws', payload, {
-    cmd:  m => termLine('Find', 'c-cmd', '$ ' + m.message),
+    cmd:  m => termLine('Global', 'c-cmd', '$ ' + m.message),
     log:  m => {
-      termLine('Find', termClassFromMessage(m.message), m.message);
+      termLine('Global', termClassFromMessage(m.message), m.message);
       const coordMatch = m.message.match(/Coordinates:\s*([\d.]+)\s*deg[^,]*,\s*([\d.]+)/);
       if (coordMatch) goTo(parseFloat(coordMatch[1]), parseFloat(coordMatch[2]));
       progress = Math.min(progress + 10, 90);
@@ -131,9 +131,9 @@ export function runFind() {
       addTileChip(m.data);
       document.getElementById('sendRetrieve').style.display = 'block';
     },
-    exit:  m => { if (m.code !== 0) termLine('Find', 'c-err', `exit ${m.code}`); },
+    exit:  m => { if (m.code !== 0) termLine('Global', 'c-err', `exit ${m.code}`); },
     done:  () => { progSet('Find', 100); btn.disabled = false; },
-    error: m => { termLine('Find', 'c-err', m.message); btn.disabled = false; },
+    error: m => { termLine('Global', 'c-err', m.message); btn.disabled = false; },
   });
 }
 
@@ -155,6 +155,10 @@ export function sendToRetrieve() {
   const toAdd   = selectedTiles.length ? selectedTiles : foundTiles.map(t => t.index);
   const all     = [...new Set([...current.split(/\s+/).filter(Boolean), ...toAdd])];
   document.getElementById('retrieveTiles').value = all.join(' ');
-  document.getElementById('termRetrieve').innerHTML = '';
-  document.getElementById('termRetrieve').scrollIntoView({ behavior: 'smooth' });
+  const details = document.getElementById('detailsRetrieve');
+  if (details) {
+    details.open = true;
+  }
+  document.getElementById('termGlobal').innerHTML = '';
+  document.getElementById('btnRetrieve').scrollIntoView({ behavior: 'smooth' });
 }

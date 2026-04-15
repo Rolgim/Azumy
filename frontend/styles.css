@@ -17,7 +17,7 @@ header {
   text-align: center;
   padding: 10px 10px 10px;
   border-bottom: 1px solid #0f2040;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   background: linear-gradient(180deg, #050d1a 0%, #06101e 100%);
 }
 .logo {
@@ -37,7 +37,7 @@ header {
 .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
 
 .section {
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   background: #0a1628;
   border: 1px solid #0f2040;
   border-radius: 8px;
@@ -181,6 +181,7 @@ button.primary:hover {
   overflow: hidden;
   z-index: 1;
 }
+
 .map-hint {
   font-size: 11px;
   color: #3d6a9a;
@@ -197,10 +198,13 @@ button.primary:hover {
   display: flex;
   gap: 8px;
   margin-bottom: 14px;
+  width: 100%;
 }
 .engine-option {
   display: flex;
+  flex: 1; 
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: #07111f;
   border: 1px solid #0f2040;
@@ -220,3 +224,83 @@ button.primary:hover {
   accent-color: #3d85f5;
 }
  
+/*  60 / 40 layout */
+
+.layout {
+  display: flex;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+/* left = map */
+.left-pane {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* right = controls */
+.right-pane {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* carte */
+#aladinMap {
+  width: 100%;
+  height: 780px;
+  border: 1px solid #0f2040;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* hint under map */
+.left-pane .map-hint {
+  margin-top: 8px;
+}
+
+/* responsive fallback */
+@media (max-width: 1000px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .left-pane,
+  .right-pane {
+    flex: 1 1 100%;
+  }
+
+  #aladinMap {
+    height: 600px;
+  }
+}
+
+.section-title {
+  font-size: 11px;
+  color: #3d85f5;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  cursor: pointer;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #0f2040;
+}
+
+details > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
