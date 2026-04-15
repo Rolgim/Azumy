@@ -6,13 +6,14 @@
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS, API } from './websocket.js';
-import { initMap, goTo, loadTiling } from './map.js';
+import { initMap, goTo, loadTiling, drawCircle } from './map.js';
 
 export let foundTiles    = [];
 export let selectedTiles = [];
 
 let selectedRa  = null;
 let selectedDec = null;
+let selectedRadius = null;
 
 export async function initFind() {
   await initMap('aladinMap');
@@ -20,7 +21,7 @@ export async function initFind() {
 }
 
 function initUI() {
-  // Map → fill fields
+  // Map → fill fields without radius
   document.addEventListener('sky:select', ({ detail: { ra, dec } }) => {
     selectedRa  = ra;
     selectedDec = dec;
@@ -28,9 +29,20 @@ function initUI() {
     document.getElementById('findDec').value = dec.toFixed(6);
   });
 
+    // Map → fill fields with radius
+  document.addEventListener('sky:region', ({ detail: { ra, dec, radius } }) => {
+    selectedRa  = ra;
+    selectedDec = dec;
+    selectedRadius = radius;
+    document.getElementById('findRa').value  = ra.toFixed(6);
+    document.getElementById('findDec').value = dec.toFixed(6);
+    document.getElementById('findRadius').value = radius.toFixed(6);
+  });
+
   // Manual fields → map
   document.getElementById('findRa')?.addEventListener('change', syncFieldsToMap);
   document.getElementById('findDec')?.addEventListener('change', syncFieldsToMap);
+  document.getElementById('findRadius')?.addEventListener('change', syncFieldsToMap);
 
   // Tiling input → update map overlay
   document.getElementById('findTiling')?.addEventListener('change', e => loadTiling(e.target.value.trim()));
@@ -78,6 +90,10 @@ function syncFieldsToMap() {
   if (isNaN(ra) || isNaN(dec)) return;
   selectedRa = ra; selectedDec = dec;
   goTo(ra, dec);
+  const radius = parseFloat(document.getElementById('findRadius').value);
+  if (isNaN(radius)) return ;
+  selectedRadius = radius;
+  drawCircle(ra, dec, selectedRadius);
 }
 
 export function runFind() {

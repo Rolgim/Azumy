@@ -35,18 +35,26 @@ SPDX-License-Identifier: Apache-2.0
       <label>Dec (deg)</label>
       <input id="findDec" type="text" placeholder="+64.0472200">
     </div>
-  </div>
-  <div class="row">
+    <div>
+      <label>Radius (deg)</label>
+      <input id="findRadius" type="text" placeholder="Leave blank to select the entire tile">
+    </div>
     <div>
       <label>Objects</label>
       <input id="findObjects" type="text" placeholder="M82 NGC6536">
     </div>
+  </div>
+  <div class="row">
     <div>
       <label>Tiling</label>
       <div style="display:flex; align-items:flex-end; padding-bottom:12px">
         <button class="primary" id="btnUploadTiling" style="width:100%">Upload</button>
         <input id="tilingFileInput" type="file" accept=".geojson" style="display:none">
       </div>
+    </div>
+    <div>
+      <label>Find</label>
+      <button id="btnFindObjects" style="width:100%">Find</button>
     </div>
   </div>
 

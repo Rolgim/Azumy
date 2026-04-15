@@ -129,6 +129,11 @@ function drawCircleOn(overlay, ra, dec, radiusDeg, steps = 64) {
   overlay.add(A.polygon(points));
 }
 
+export function drawCircle(ra, dec, radius) {
+  if (!aladin || !circleOverlay || radius == null) return;
+  drawCircleOn(circleOverlay, ra, dec, radius);
+}
+
 function angularDistance(ra1, dec1, ra2, dec2) {
   const toRad = d => d * Math.PI / 180;
   const cos   =
