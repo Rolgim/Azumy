@@ -1,18 +1,18 @@
 /**
  * SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
  * SPDX-License-Identifier: Apache-2.0
- * 
+ *
  * map.js — Aladin Lite v3 sky map
- * Click on the sky → dispatches "sky:select" with { ra, dec }
  */
 
 import { API } from './websocket.js';
 
-let aladin      = null;
-let markerLayer = null;
-let tilingOverlay = null;
-let circleOverlay = null;
-let firstClick = null;
+let aladin         = null;
+let markerLayer    = null;
+let tilingOverlay  = null;
+let circleOverlay  = null;
+let previewOverlay = null;   // cercle de preview (mousemove)
+let firstClick     = null;
 
 export async function initMap(containerId) {
   await loadAladinScript();
@@ -32,56 +32,73 @@ export async function initMap(containerId) {
     showShareControl:      true,
     showCooLocation:       true,
   });
-  
+
   markerLayer = A.catalog({ shape: 'circle', color: '#4ec9b0', sourceSize: 12 });
   aladin.addCatalog(markerLayer);
 
-  // overlay cercle
-  circleOverlay = A.graphicOverlay({ color: '#8066be', lineWidth: 2 });
+  circleOverlay  = A.graphicOverlay({ color: '#8066be', lineWidth: 2 });
+  previewOverlay = A.graphicOverlay({ color: '#8066be', lineWidth: 1, lineDash: [4, 4] });
   aladin.addOverlay(circleOverlay);
+  aladin.addOverlay(previewOverlay);
 
+  // Clic
   aladin.on('click', (raOrObj, decArg) => {
     const ra  = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.ra  : raOrObj;
     const dec = (raOrObj !== null && typeof raOrObj === 'object') ? raOrObj.dec : decArg;
     if (ra == null || dec == null) return;
 
-    // 1st clic  -> position
     if (!firstClick) {
+      // 1st clic → center
       firstClick = { ra, dec };
-
       placeMarker(ra, dec);
       circleOverlay.removeAll();
-
-      document.dispatchEvent(new CustomEvent('sky:select', {
-        detail: { ra, dec }
+      previewOverlay.removeAll();
+      document.dispatchEvent(new CustomEvent('sky:select', { detail: { ra, dec } }));
+    } else {
+      // 2nd clic → radius
+      const radius = angularDistance(firstClick.ra, firstClick.dec, ra, dec);
+      previewOverlay.removeAll();
+      drawCircleOn(circleOverlay, firstClick.ra, firstClick.dec, radius);
+      document.dispatchEvent(new CustomEvent('sky:region', {
+        detail: { ra: firstClick.ra, dec: firstClick.dec, radius }
       }));
-
-      return;
+      firstClick = null;
     }
+  });
 
-    // 2nd clic → radius
-    const radius = angularDistance(
-      firstClick.ra,
-      firstClick.dec,
-      ra,
-      dec
-    );
+  // Mousemove → circle preview
+  const aladinDiv = document.getElementById(containerId);
+  aladinDiv.addEventListener('mousemove', e => {
+    if (!firstClick || !aladin.pix2world) return;
 
-    drawCircle(firstClick.ra, firstClick.dec, radius);
-    console.log(radius);
+    const rect = aladinDiv.getBoundingClientRect();
+    const x    = e.clientX - rect.left;
+    const y    = e.clientY - rect.top;
 
-    document.dispatchEvent(new CustomEvent('sky:region', {
-      detail: {
-        ra: firstClick.ra,
-        dec: firstClick.dec,
-        radius
-      }
-    }));
+    // pix2world returns [ra, dec] in degrees
+    const skyCoords = aladin.pix2world(x, y);
+    if (!skyCoords || skyCoords[0] == null) return;
 
-    // reset
-    firstClick = null;
+    const [raMouse, decMouse] = skyCoords;
+    const radius = angularDistance(firstClick.ra, firstClick.dec, raMouse, decMouse);
+
+    previewOverlay.removeAll();
+    if (radius > 0) {
+      drawCircleOn(previewOverlay, firstClick.ra, firstClick.dec, radius);
+    }
+  });
+
+  // cancel with escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && firstClick) {
+      firstClick = null;
+      previewOverlay.removeAll();
+      markerLayer.clear();
+    }
   });
 }
+
+// Helpers
 
 function placeMarker(ra, dec) {
   markerLayer.clear();
@@ -92,59 +109,37 @@ export function goTo(ra, dec) {
   if (!aladin) return;
   aladin.gotoRaDec(ra, dec);
   placeMarker(ra, dec);
-
-  // reset selection
   firstClick = null;
-  if (circleOverlay) circleOverlay.removeAll();
+  circleOverlay?.removeAll();
+  previewOverlay?.removeAll();
 }
 
-/**
- * Draw circle (polygon approximation)
- */
-function drawCircle(ra, dec, radiusDeg) {
-  const points = [];
-  const steps = 64;
-
-  const decRad = dec * Math.PI / 180;
-
+function drawCircleOn(overlay, ra, dec, radiusDeg, steps = 64) {
+  const points  = [];
+  const decRad  = dec * Math.PI / 180;
   for (let i = 0; i < steps; i++) {
     const angle = (i / steps) * 2 * Math.PI;
-
-    const dRa  = (radiusDeg * Math.cos(angle)) / Math.cos(decRad);
-    const dDec = radiusDeg * Math.sin(angle);
-
+    const dRa   = (radiusDeg * Math.cos(angle)) / Math.cos(decRad);
+    const dDec  = radiusDeg * Math.sin(angle);
     points.push([ra + dRa, dec + dDec]);
   }
-
-  circleOverlay.removeAll();
-  circleOverlay.add(A.polygon(points));
+  overlay.removeAll();
+  overlay.add(A.polygon(points));
 }
 
-/**
- * Angular distance (deg)
- */
 function angularDistance(ra1, dec1, ra2, dec2) {
   const toRad = d => d * Math.PI / 180;
-
-  const r1 = toRad(ra1);
-  const d1 = toRad(dec1);
-  const r2 = toRad(ra2);
-  const d2 = toRad(dec2);
-
-  const cos =
-    Math.sin(d1) * Math.sin(d2) +
-    Math.cos(d1) * Math.cos(d2) * Math.cos(r1 - r2);
-
-  return Math.acos(Math.min(1, cos)) * 180 / Math.PI;
+  const cos   =
+    Math.sin(toRad(dec1)) * Math.sin(toRad(dec2)) +
+    Math.cos(toRad(dec1)) * Math.cos(toRad(dec2)) * Math.cos(toRad(ra1 - ra2));
+  return Math.acos(Math.min(1, Math.max(-1, cos))) * 180 / Math.PI;
 }
 
-/**
- * Load tiling polygons from the backend
- */
+// Tiling
+
 export async function loadTiling(filename) {
   if (!aladin || !filename) return;
 
-  // Remove existing tiling overlay if any
   if (tilingOverlay) {
     aladin.removeOverlay(tilingOverlay);
     tilingOverlay = null;
@@ -164,13 +159,12 @@ export async function loadTiling(filename) {
   aladin.addOverlay(tilingOverlay);
 
   for (const tile of data.tiles) {
-    // coords GeoJSON : [[ra, dec], ...] - Aladin [[ra, dec], ...]
-    const footprint = A.polygon(tile.coords.map(([ra, dec]) => [ra, dec]));
-    tilingOverlay.add(footprint);
+    tilingOverlay.add(A.polygon(tile.coords.map(([ra, dec]) => [ra, dec])));
   }
-
   console.log(`Loaded ${data.tiles.length} tile polygons`);
 }
+
+// Aladin loader
 
 function loadAladinScript() {
   return new Promise((resolve, reject) => {
