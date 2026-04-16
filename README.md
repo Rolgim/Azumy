@@ -1,16 +1,19 @@
-# Azumy 🌌
+<p align="center">
+  <img width="50%" height="50%" alt="image" src="https://github.com/Rolgim/Azumy/blob/develop/frontend/img/azumy.png?raw=true" />
+</p>
 
 <p align="center">
-  <img src="https://github.com/Rolgim/Azulweb/actions/workflows/tests.yml/badge.svg" />
-  <img src="https://codecov.io/github/Rolgim/Azulweb/branch/develop/graph/badge.svg?token=OJ0GPTA88F"/> 
+  <img src="https://github.com/Rolgim/Azumy/actions/workflows/tests.yml/badge.svg" />
+  <img src="https://codecov.io/github/Rolgim/Azumy/branch/main/graph/badge.svg?token=OJ0GPTA88F"/> 
   <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" />
 
   <img src="https://img.shields.io/badge/mypy-checked-blue" />
   <img src="https://img.shields.io/badge/packaging-uv-purple" />
 
   <img src="https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=white" />
-  <img src="https://img.shields.io/github/license/Rolgim/Azulweb" />
+  <img src="https://img.shields.io/github/license/Rolgim/Azumy" />
 </p>
+
 
 <p align="center">
   Web interface for <a href="https://github.com/kabasset/azulero">Azulero</a> by A. Basset and <a href="https://github.com/schirmermischa/eummy">Eummy</a> by M. Schirmer - two pipelines designed to produce color images from <a href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">Euclid</a> space telescope data.
@@ -20,14 +23,21 @@
 
 ## Overview
 
-Azulweb wraps the `azul` command-line pipeline into a browser-based interface. It covers the full workflow:
-
+Azumy wraps the `azul` and `eummy` command-line pipelines into a browser-based interface. It covers the full workflow:
+<div align="center">
+  
 | Step | Command | Description |
 |------|---------|-------------|
 | **Find** | `azul find` | Locate tile indices from object names or sky coordinates |
 | **Retrieve** | `azul retrieve` | Download MER FITS files from ESA archives |
 | **Crop** | `azul crop` | Visually select a region of interest on the VIS channel |
 | **Process** | `azul process` or `eummy` | Render a color sRGB image from IYJH channels |
+
+</div>
+
+Screenshot of the interface:
+<img width="1852" height="931" alt="image" src="https://github.com/user-attachments/assets/ffd311ff-6221-4087-a194-5e66a3c0132f" />
+
 
 ## Requirements
 
@@ -38,8 +48,8 @@ Azulweb wraps the `azul` command-line pipeline into a browser-based interface. I
 ## Quick start
 
 ```bash
-git clone https://github.com/Rolgim/Azulweb.git
-cd Azulweb
+git clone https://github.com/Rolgim/Azumy.git
+cd Azumy
 chmod +x run.sh
 ./run.sh
 ```
@@ -92,7 +102,7 @@ https://gitlab.euclid-sgs.uk/sy-tools/ST_SMT_DATA/-/raw/DR1/data/DpdMerFinalCata
 ## Project structure
 
 ```
-Azulweb/
+Azumy/
 ├── main.py              # FastAPI app
 ├── utils.py             # Shared utilities (stream_command, build_cmd)
 ├── routers/
