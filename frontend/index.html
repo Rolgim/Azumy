@@ -13,221 +13,247 @@ SPDX-License-Identifier: Apache-2.0
 </head>
 
 <body>
-<!-- Logo --> 
+
+<!-- Header -->
 <header>
   <img src="img/azumy.png" alt="Azul logo" class="logo">
 </header>
 
-<!-- Find -->
-<section class="section">
-  <h2>Find</h2>
+<!-- Layout 60 / 40 -->
+<div class="layout">
 
-  <!-- Aladin -->
-  <div id="aladinMap"></div>
-  <p class="map-hint">Click on the sky to select coordinates — or type below</p>
-
-  <div class="row">
-    <div>
-      <label>RA (deg)</label>
-      <input id="findRa" type="text" placeholder="266.9397155">
-    </div>
-    <div>
-      <label>Dec (deg)</label>
-      <input id="findDec" type="text" placeholder="+64.0472200">
-    </div>
-  </div>
-  <div class="row">
-    <div>
-      <label>Objects</label>
-      <input id="findObjects" type="text" placeholder="M82 NGC6536">
-    </div>
-    <div>
-      <label>Tiling</label>
-      <div style="display:flex; align-items:flex-end; padding-bottom:12px">
-        <button class="primary" id="btnUploadTiling" style="width:100%">Upload</button>
-        <input id="tilingFileInput" type="file" accept=".geojson" style="display:none">
-      </div>
-    </div>
+  <!-- LEFT: MAP ONLY -->
+  <div class="left-pane">
+    <div id="aladinMap"></div>
+    <p class="map-hint">Click on the sky to select coordinates — or type below</p>
   </div>
 
-  <button id="btnFind">▶ azul find</button>
-  <div class="progress" id="progFind">
-    <div class="progress-bar" id="progFindBar" style="width:0%"></div>
-  </div>
-  <div class="term" id="termFind"></div>
-  <div class="tiles" id="tilesResult"></div>
-  <div id="sendRetrieve" style="display:none; margin-top:10px">
-    <button id="btnSendRetrieve">→ Send to Retrieve</button>
-  </div>
-</section>
+  <!-- RIGHT: ALL CONTROLS -->
+  <div class="right-pane">
 
-<!-- Retrieve -->
-<section class="section">
-  <h2>Retrieve</h2>
-  <div class="row">
-    <div>
-      <label>Tile indices</label>
-      <input id="retrieveTiles" type="text" placeholder="102159776 102159777">
-    </div>
-    <div>
-      <label>Provider</label>
-      <select id="retrieveProvider">
-        <option value="idr">IDR (private)</option>
-        <option value="sas">SAS (public)</option>
-        <option value="dss">DSS</option>
-      </select>
-    </div>
-  </div>
-  <div>
-    <label>Dataset releases</label>
-    <input id="retrieveDsr" type="text" value="DR1_R2,DR1_R1,Q1_R1">
-  </div>
-  <button id="btnRetrieve">▶ azul retrieve</button>
-  <div class="progress" id="progRetrieve">
-    <div class="progress-bar" id="progRetrieveBar" style="width:0%"></div>
-  </div>
-  <div class="term" id="termRetrieve"></div>
-  <div class="tiles" id="tilesRetrieved"></div>
-  <div id="sendCrop" style="display:none; margin-top:10px">
-    <button id="btnSendCrop">→ Send to Crop</button>
-  </div>
-</section>
-
-<!-- Crop -->
-<section class="section">
-  <h2>Crop</h2>
-  <div class="row">
-    <div>
-      <label>Tile index</label>
-      <input id="cropTile" type="text" placeholder="102159776">
-    </div>
-    <div style="display:flex; align-items:flex-end; padding-bottom:12px">
-      <button class="primary" id="btnCropPreview" style="width:100%">▶ Load VIS preview</button>
-    </div>
-  </div>
-
-  <div id="cropContainer" style="display:none">
-    <div id="cropStatus" style="font-size:11px; color:#3d6a9a; margin-bottom:8px"></div>
-    <div style="overflow:auto; border:1px solid #0f2040; border-radius:4px; background:#202020">
-      <canvas id="cropCanvas" style="display:block; max-width:100%; cursor:crosshair; margin: 0 auto;"></canvas>
-    </div>
-    <div id="cropResult" style="display:none; margin-top:10px; display:flex; gap:10px; align-items:center">
-      <code id="cropSlicing" style="font-size:12px; color:#4ec9b0; flex:1"></code>
-      <button id="btnCropSend">→ Send to Process</button>
-    </div>
-  </div>
-</section>
-
-<!-- Process -->
-<section class="section">
-  <h2>Process</h2>
-
-  <div>
-    <label>Tile spec</label>
-    <input id="processTile" type="text" placeholder="102159776[6000:7000,5000:7000]">
-  </div>
-
-  <!-- Engine switch -->
-  <div class="engine-switch">
-    <label class="engine-option">
-      <input type="radio" id="engineAzul" name="engine" value="azul" checked>
-      <span>azul</span>
-    </label>
-    <label class="engine-option">
-      <input type="radio" id="engineEummy" name="engine" value="eummy">
-      <span>eummy</span>
-    </label>
-  </div>
-
-  <!-- azul parameters -->
-  <div id="azulParams">
-    <details>
-      <summary style="font-size:11px; color:#3d6a9a; cursor:pointer; user-select:none; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px">Parameters</summary>
-      <div>
-        <div class="row">
-          <div><label>Zero points I Y J H</label><input id="procZero" type="text" value="24.5, 29.8, 30.1, 30.0"></div>
-          <div><label>Scaling I Y J H</label><input id="procScaling" type="text" value="2.2, 1.3, 1.2, 1.0"></div>
-        </div>
-        <div class="row">
-          <div><label>FWHM I Y J H</label><input id="procFwhm" type="text" value="1.6, 3.5, 3.4, 3.5"></div>
-          <div><label>Sharpen strength</label><input id="procSharpen" type="number" step="0.1" value="0.5"></div>
-        </div>
-        <div class="row">
-          <div><label>NIR → L</label><input id="procNirl" type="number" step="0.05" value="0.1"></div>
-          <div><label>I → B</label><input id="procIb" type="number" step="0.05" value="1.0"></div>
-        </div>
-        <div class="row">
-          <div><label>Y → G</label><input id="procYg" type="number" step="0.05" value="0.5"></div>
-          <div><label>J → R</label><input id="procJr" type="number" step="0.05" value="0.25"></div>
-        </div>
-        <div class="row">
-          <div><label>White point (mag)</label><input id="procWhite" type="number" step="0.5" value="22.0"></div>
-          <div><label>Stretch (mag)</label><input id="procStretch" type="number" step="0.5" value="28.0"></div>
-        </div>
-        <div class="row">
-          <div><label>Offset / black (mag)</label><input id="procOffset" type="number" step="0.5" value="29.0"></div>
-          <div><label>Hue shift (°)</label><input id="procHue" type="number" step="1" value="-20"></div>
-        </div>
-        <div class="row">
-          <div><label>Saturation</label><input id="procSaturation" type="number" step="0.1" value="1.2"></div>
-          <div class="flex-end"><button id="btnResetProcessAzul" class="btnResetProcess">↺ Reset</button></div>
-        </div>
-      </div>
-    </details>
-  </div>
-
-  <!-- eummy parameters -->
-  <div id="eummyParams" style="display:none">
-    <details>
-      <summary style="font-size:11px; color:#3d6a9a; cursor:pointer; user-select:none; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px">Parameters</summary>
-      <div>
-        <div class="row">
-          <div><label>Black / White (min max)</label><input id="eummyBlackwhite" type="text" value="-1.3, 7000"></div>
-          <div><label>Pivot</label><input id="eummyPivot" type="number" step="0.01" value="0.15"></div>
-        </div>
-        <div class="row">
-          <div><label>Contrast (blank = auto)</label><input id="eummyContrast" type="text" placeholder="auto"></div>
-          <div><label>Scales I Y J H</label><input id="eummyScales" type="text" value="0.002039, 0.595, 1.0, 1.0985"></div>
-        </div>
-        <div class="row">
-          <div><label>fr (H → L blend)</label><input id="eummyFr" type="number" step="0.05" value="0.3"></div>
-          <div><label>Saturate (a* [b*])</label><input id="eummySaturate" type="text" value="2.0"></div>
-        </div>
+    <section class="section">
+      <!-- Find -->
+      <details id="detailsFind" open>
+        <summary class="section-title">Find</summary>
         <div class="row">
           <div>
-            <label>Unsharp mask (FWHM strength threshold)</label>
-            <div style="display:flex; gap:8px; align-items:center">
-              <input type="checkbox" id="eummyUmEnabled" checked style="width:auto;margin-bottom:0">
-              <input id="eummyUm" type="text" value="1.6, 0.75, 0.09">
-            </div>
+            <label>RA (deg)</label>
+            <input id="findRa" type="text" placeholder="266.9397155">
           </div>
           <div>
-            <label>Blend I+Y (--blendIY)</label>
-            <div style="display:flex; gap:8px; align-items:center">
-              <input type="checkbox" id="eummyBlendIY" style="width:auto;margin-bottom:0">
-              <input id="eummyFi" type="number" step="0.1" value="1.6" placeholder="fi">
-            </div>
+            <label>Dec (deg)</label>
+            <input id="findDec" type="text" placeholder="+64.0472200">
+          </div>
+          <div>
+            <label>Radius (deg)</label>
+            <input id="findRadius" type="text" placeholder="Leave blank to select the entire tile">
+          </div>
+          <div>
+            <label>Objects</label>
+            <input id="findObjects" type="text" placeholder="M82 NGC6536">
           </div>
         </div>
         <div class="row">
-          <div></div>
-          <div class="flex-end"><button id="btnResetProcessEummy" class="btnResetProcess">↺ Reset</button></div>
+          <div>
+            <label>Tiling</label>
+            <div style="display:flex; align-items:flex-end; padding-bottom:12px">
+              <button class="primary" id="btnUploadTiling" style="width:100%">Upload</button>
+              <input id="tilingFileInput" type="file" accept=".geojson" style="display:none">
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-end; padding-bottom:12px">
+            <button id="btnFind" style="width:100%">▶ Find</button>
+          </div>
+        </div>
+        <div class="progress" id="progFind">
+        <div class="progress-bar" id="progFindBar" style="width:0%"></div>
+        </div>
+        <div class="row">
+          <div class="tiles" id="tilesResult" style="width:100%;"></div>
+          <div id="sendRetrieve" style="display:none; margin-top:10px;">
+            <button id="btnSendRetrieve" style="width:100%">→ Send to Retrieve</button>
+          </div>
+        </div>
+    </details>
+
+    <details id="detailsRetrieve">
+    <!-- Retrieve -->
+      <summary class="section-title">Retrieve</summary>
+      <div class="row">
+        <div>
+          <label>Tile indices</label>
+          <input id="retrieveTiles" type="text" placeholder="102159776 102159777">
+        </div>
+        <div>
+          <label>Provider</label>
+          <select id="retrieveProvider">
+            <option value="idr">IDR (private)</option>
+            <option value="sas">SAS (public)</option>
+            <option value="dss">DSS</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+        <label>Dataset releases</label>
+        <input id="retrieveDsr" type="text" value="DR1_R2,DR1_R1,Q1_R1">
+        </div>
+        <div style="display:flex; align-items:flex-end; padding-bottom:12px">
+        <button id="btnRetrieve" style="width:100%">▶ azul retrieve</button>
+        </div>
+      </div>
+
+      <div class="progress" id="progRetrieve">
+        <div class="progress-bar" id="progRetrieveBar" style="width:0%"></div>
+      </div>
+
+      <div class="tiles" id="tilesRetrieved"></div>
+
+      <div id="sendCrop" style="display:none; margin-top:10px">
+        <button id="btnSendCrop">→ Send to Crop</button>
+      </div>
+    </details>
+      <!-- Crop -->
+    <details id="detailsCrop">
+      <summary class="section-title">Crop</summary>
+
+      <div class="row">
+        <div>
+          <label>Tile index</label>
+          <input id="cropTile" type="text" placeholder="102159776">
+        </div>
+        <div style="display:flex; align-items:flex-end; padding-bottom:12px">
+          <button class="primary" id="btnCropPreview" style="width:100%">▶ Load VIS preview</button>
+        </div>
+      </div>
+
+      <div id="cropContainer" style="display:none">
+        <div id="cropStatus" style="font-size:11px; color:#3d6a9a; margin-bottom:8px"></div>
+        <div style="overflow:auto; border:1px solid #0f2040; border-radius:4px; background:#202020">
+          <canvas id="cropCanvas" style="display:block; max-width:100%; cursor:crosshair; margin: 0 auto;"></canvas>
+        </div>
+
+        <div id="cropResult" style="display:none; margin-top:10px; display:flex; gap:10px; align-items:center">
+          <code id="cropSlicing" style="font-size:12px; color:#4ec9b0; flex:1"></code>
+          <button id="btnCropSend">→ Send to Process</button>
         </div>
       </div>
     </details>
-  </div>
-
-  <button class="primary" id="btnProcess">▶ process</button>
-  <div class="progress" id="progProcess"><div class="progress-bar" id="progProcessBar" style="width:0%"></div></div>
-  <div class="term" id="termProcess"></div>
-
-  <div id="processResult" style="display:none; text-align:center; margin-top:14px;">
-    <div id="processResultWrapper" style="overflow:auto; border:1px solid #222; border-radius:4px; background:#202020; box-shadow:0 0 4px rgba(0,0,0,0.5)">
-      <img id="processResultImg" src="" alt="Preview" style="display:block; max-width:100%; height:auto; margin:0 auto; border-radius:2px;">
+      <!-- Process -->
+    <details id="detailsProcess">
+      <summary class="section-title">Process</summary>
+      <div>
+        <label>Tile spec</label>
+        <input id="processTile" type="text" placeholder="102159776[6000:7000,5000:7000]">
+      </div>
+      <div class="engine-switch" style="margin-top:8px; margin-bottom:12px;">
+        <label class="engine-option">
+          <input type="radio" id="engineAzul" name="engine" value="azul" checked>
+          <span>azul</span>
+        </label>
+      
+        <label class="engine-option">
+          <input type="radio" id="engineEummy" name="engine" value="eummy">
+          <span>eummy</span>
+        </label>
+      </div>
+    <!-- azul parameters -->
+    <div id="azulParams">
+      <details>
+        <summary style="font-size:11px; color:#3d6a9a; cursor:pointer; user-select:none; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px">Parameters</summary>
+        <div>
+          <div class="row">
+            <div><label>Zero points I Y J H</label><input id="procZero" type="text" value="24.5, 29.8, 30.1, 30.0"></div>
+            <div><label>Scaling I Y J H</label><input id="procScaling" type="text" value="2.2, 1.3, 1.2, 1.0"></div>
+          </div>
+          <div class="row">
+            <div><label>FWHM I Y J H</label><input id="procFwhm" type="text" value="1.6, 3.5, 3.4, 3.5"></div>
+            <div><label>Sharpen strength</label><input id="procSharpen" type="number" step="0.1" value="0.5"></div>
+          </div>
+          <div class="row">
+            <div><label>NIR → L</label><input id="procNirl" type="number" step="0.05" value="0.1"></div>
+            <div><label>I → B</label><input id="procIb" type="number" step="0.05" value="1.0"></div>
+          </div>
+          <div class="row">
+            <div><label>Y → G</label><input id="procYg" type="number" step="0.05" value="0.5"></div>
+            <div><label>J → R</label><input id="procJr" type="number" step="0.05" value="0.25"></div>
+          </div>
+          <div class="row">
+            <div><label>White point (mag)</label><input id="procWhite" type="number" step="0.5" value="22.0"></div>
+            <div><label>Stretch (mag)</label><input id="procStretch" type="number" step="0.5" value="28.0"></div>
+          </div>
+          <div class="row">
+            <div><label>Offset / black (mag)</label><input id="procOffset" type="number" step="0.5" value="29.0"></div>
+            <div><label>Hue shift (°)</label><input id="procHue" type="number" step="1" value="-20"></div>
+          </div>
+          <div class="row">
+            <div><label>Saturation</label><input id="procSaturation" type="number" step="0.1" value="1.2"></div>
+            <div class="flex-end"><button id="btnResetProcessAzul" class="btnResetProcess">↺ Reset</button></div>
+          </div>
+        </div>
+      </details>
     </div>
-    <div id="processResultLabel" style="margin-top:8px; color:#ccc; font-size:12px;"></div>
+    <!-- eummy parameters -->
+    <div id="eummyParams" style="display:none">
+      <details>
+        <summary style="font-size:11px; color:#3d6a9a; cursor:pointer; user-select:none; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px">Parameters</summary>
+        <div>
+          <div class="row">
+            <div><label>Black / White (min max)</label><input id="eummyBlackwhite" type="text" value="-1.3, 7000"></div>
+            <div><label>Pivot</label><input id="eummyPivot" type="number" step="0.01" value="0.15"></div>
+          </div>
+          <div class="row">
+            <div><label>Contrast (blank = auto)</label><input id="eummyContrast" type="text" placeholder="auto"></div>
+            <div><label>Scales I Y J H</label><input id="eummyScales" type="text" value="0.002039, 0.595, 1.0, 1.0985"></div>
+          </div>
+          <div class="row">
+            <div><label>fr (H → L blend)</label><input id="eummyFr" type="number" step="0.05" value="0.3"></div>
+            <div><label>Saturate (a* [b*])</label><input id="eummySaturate" type="text" value="2.0"></div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Unsharp mask (FWHM strength threshold)</label>
+              <div style="display:flex; gap:8px; align-items:center">
+                <input type="checkbox" id="eummyUmEnabled" checked style="width:auto;margin-bottom:0">
+                <input id="eummyUm" type="text" value="1.6, 0.75, 0.09">
+              </div>
+            </div>
+            <div>
+              <label>Blend I+Y (--blendIY)</label>
+              <div style="display:flex; gap:8px; align-items:center">
+                <input type="checkbox" id="eummyBlendIY" style="width:auto;margin-bottom:0">
+                <input id="eummyFi" type="number" step="0.1" value="1.6" placeholder="fi">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div></div>
+            <div class="flex-end"><button id="btnResetProcessEummy" class="btnResetProcess">↺ Reset</button></div>
+          </div>
+        </div>
+      </details>
+    </div>
+    <button class="primary" id="btnProcess">▶ process</button>
+    <div class="progress" id="progProcess">
+      <div class="progress-bar" id="progProcessBar" style="width:0%"></div>
+    </div>
+
+      <div id="processResult" style="display:none; text-align:center; margin-top:14px;">
+        <div id="processResultWrapper" style="overflow:auto; border:1px solid #222; border-radius:4px; background:#202020;">
+          <img id="processResultImg" src="" alt="Preview" style="display:block; max-width:100%; height:auto; margin:0 auto;">
+        </div>
+        <div id="processResultLabel" style="margin-top:8px; color:#ccc; font-size:12px;"></div>
+      </div>
+    </details>
+    </section>
+    <section class="section">
+      <h2>Terminal</h2>
+      <div class="term" id="termGlobal"></div>
+    </section>
+
   </div>
-</section>
+</div>
 
 <script type="module" src="js/main.js"></script>
 </body>

@@ -11,14 +11,14 @@ export let retrievedTiles    = [];
 export let selectedTiles = [];
 
 export function runRetrieve() {
-  termClear('Retrieve');
+  termClear('Global');
 
   document.getElementById('sendCrop').style.display = 'none';
   retrievedTiles = []; selectedTiles = [];
 
   const tiles = document.getElementById('retrieveTiles').value.trim().split(/\s+/).filter(Boolean);
   if (!tiles.length) {
-    termLine('Retrieve', 'c-err', 'No tile indices provided');
+    termLine('Global', 'c-err', 'No tile indices provided');
     return;
   }
 
@@ -40,12 +40,12 @@ export function runRetrieve() {
     heartbeatStart = Date.now();
     heartbeatEl = document.createElement('span');
     heartbeatEl.className = 'c-dim';
-    document.getElementById('termRetrieve').appendChild(heartbeatEl);
+    document.getElementById('termGlobal').appendChild(heartbeatEl);
 
     heartbeatInterval = setInterval(() => {
       const elapsed = ((Date.now() - heartbeatStart) / 1000).toFixed(0);
       heartbeatEl.textContent = `  downloading... ${elapsed}s elapsed\n`;
-      document.getElementById('termRetrieve').scrollTop = 9999;
+      document.getElementById('termGlobal').scrollTop = 9999;
     }, 1000);
   }
 
@@ -57,25 +57,25 @@ export function runRetrieve() {
   }
 
   openWS('/retrieve/ws', payload, {
-    cmd:  m => termLine('Retrieve', 'c-cmd', '$ ' + m.message),
+    cmd:  m => termLine('Global', 'c-cmd', '$ ' + m.message),
     log:  m => {
       // "Download and extract datafiles to:" start the heartbeat, then stop it when the first file is received (or on error/exit)
       if (m.message.startsWith('Download and extract')) {
-        termLine('Retrieve', termClassFromMessage(m.message), m.message);
+        termLine('Global', termClassFromMessage(m.message), m.message);
         startHeartbeat();
       } else {
-        termLine('Retrieve', termClassFromMessage(m.message), m.message);
+        termLine('Global', termClassFromMessage(m.message), m.message);
       }
     },
     file: m => {
       stopHeartbeat();
-      termLine('Retrieve', 'c-ok', `✓ [${m.filter}] ${m.name}`);
+      termLine('Global', 'c-ok', `✓ [${m.filter}] ${m.name}`);
       startHeartbeat(); // restart heartbeat for next file (if any)
     },
     progress: m => progSet('Retrieve', m.percent),
     exit:  m => {
       stopHeartbeat();
-      if (m.code !== 0) termLine('Retrieve', 'c-err', `exit ${m.code}`);
+      if (m.code !== 0) termLine('Global', 'c-err', `exit ${m.code}`);
     },
     tile: m => {
       const tileIndex = m.index;
@@ -90,7 +90,7 @@ export function runRetrieve() {
     },
     error: m => {
       stopHeartbeat();
-      termLine('Retrieve', 'c-err', m.message);
+      termLine('Global', 'c-err', m.message);
       btn.disabled = false;
     },
   });
@@ -121,6 +121,10 @@ function addTileChip(tile) {
 export function sendToCrop() {
   const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0]?.index;
   if (!tile) return;
+  const details = document.getElementById('detailsCrop');
+  if (details) {
+    details.open = true;
+  }
   document.getElementById('cropTile').value = tile;
   document.getElementById('cropTile').scrollIntoView({ behavior: 'smooth' });
 }

@@ -26,7 +26,7 @@ def _find_vis_file(workdir: Path, pattern: str = "EUC_MER_BGSUB-MOSAIC-VIS*") ->
 
 
 @router.get("/preview/{tile}")
-def crop_preview(tile: str, white: float = 1.0, downsample: int = 10) -> Response:
+def crop_preview(tile: str, white: float = 99.5, downsample: int = 10) -> Response:
     """
     Generate a downsampled, stretched preview PNG from the VIS FITS file of the tile.
     """
@@ -59,13 +59,15 @@ def crop_preview(tile: str, white: float = 1.0, downsample: int = 10) -> Respons
 
     # Downsample + stretch
     d = data[::downsample, ::downsample]
-    d = np.clip(d, 0, white)
+    p_low, p_high = np.percentile(d, (1, white))
+    d = np.clip(d, p_low, p_high)
+    d = (d - p_low) / (p_high - p_low + 1e-9)
     d = np.arcsinh(d / 0.7)
     d = (d - d.min()) / (d.max() - d.min() + 1e-9)
 
     # PNG in memory
     fig, ax = plt.subplots(figsize=(8, 8 * h / w))
-    ax.imshow(np.flipud(d), cmap="gray", extent=[0, w, 0, h], aspect="auto")
+    ax.imshow(np.flipud(d), cmap="gray", extent=(0.0, float(w), 0.0, float(h)), aspect="auto")
     ax.axis("off")
     fig.tight_layout(pad=0)
     buf = sysio.BytesIO()
