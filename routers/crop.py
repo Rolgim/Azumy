@@ -25,7 +25,7 @@ def _find_vis_file(workdir: Path, pattern: str = "EUC_MER_BGSUB-MOSAIC-VIS*") ->
     return candidates[0]
 
 
-@router.get("/preview/{tile}")
+@router.get("/preview/{tile:path}")
 def crop_preview(tile: str, white: float = 99.5, downsample: int = 10) -> Response:
     """
     Generate a downsampled, stretched preview PNG from the VIS FITS file of the tile.
@@ -41,6 +41,7 @@ def crop_preview(tile: str, white: float = 99.5, downsample: int = 10) -> Respon
         raise HTTPException(500, f"Missing dependency: {e}")
 
     workdir = ws_path() / tile
+    logger.info(f"Generating preview for tile {tile} in workdir {workdir}")
     vis_file = _find_vis_file(workdir)
 
     with fits.open(vis_file, memmap=True) as hdul:

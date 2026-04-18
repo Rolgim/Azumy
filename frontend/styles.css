@@ -144,7 +144,7 @@ button.primary:hover {
 .c-warn { color: #f5c842; }
 .c-dim  { color: #1e3d5c; }
 
-.tiles { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.tiles { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; margin-bottom: 12px;}
 .tile {
   background: #07111f;
   border: 1px solid #1a3a6a;
@@ -304,4 +304,14 @@ details > summary {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.retrieve-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hidden {
+  display: none;
 }

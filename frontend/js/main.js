@@ -4,7 +4,7 @@
  */
 
 import { initFind, runFind, sendToRetrieve }      from './find.js';
-import { runRetrieve, sendToCrop}                 from './retrieve.js';
+import { runRetrieve, sendToCrop, sendToProcess } from './retrieve.js';
 import { loadCropPreview, sendCropToProcess }     from './crop.js';
 import { initProcess, runProcess, resetProcess }               from './process.js';
 
@@ -13,6 +13,7 @@ document.getElementById('btnSendRetrieve').addEventListener('click', sendToRetri
 
 document.getElementById('btnRetrieve').addEventListener('click', runRetrieve);
 document.getElementById('btnSendCrop').addEventListener('click', sendToCrop);
+document.getElementById('btnSendProcess').addEventListener('click', sendToProcess);
 
 document.getElementById('btnCropPreview').addEventListener('click', () => {
     const tile = document.getElementById('cropTile').value.trim();
