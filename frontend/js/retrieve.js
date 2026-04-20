@@ -7,18 +7,54 @@ import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS } from './websocket.js';
 
-export let retrievedTiles    = [];
-export let selectedTiles = [];
+export let retrievedWorkdirs = [];
+export let selectedWorkdir   = null;
+
+
+function buildTargets() {
+  const sourceType = document.getElementById('sourceType')?.value ?? 'tiles';
+  const radius     = document.getElementById('findRadius')?.value.trim() || null;
+
+  let targets;
+
+  switch (sourceType) {
+    case 'Object': {
+      const objects = document.getElementById('findObjects')?.value.trim().split(/\s+/).filter(Boolean) ?? [];
+      if (!objects.length) return { targets: [], radius, error: 'No objects specified' };
+      targets = objects;
+      break;
+    }
+    case 'RA/Dec': {
+      const ra  = parseFloat(document.getElementById('findRa')?.value);
+      const dec = parseFloat(document.getElementById('findDec')?.value);
+      if (isNaN(ra) || isNaN(dec)) return { targets: [], radius, error: 'Invalid RA/Dec' };
+      targets = [`${ra},${dec}`];
+      break;
+    }
+    case 'tiles':
+    default: {
+      targets = document.getElementById('retrieveTiles')?.value.trim().split(/\s+/).filter(Boolean) ?? [];
+      if (!targets.length) return { targets: [], radius: null, error: 'No tile indices provided' };
+      break;
+    }
+  }
+
+  // Radius only relevant for Object and RA/Dec
+  const effectiveRadius = sourceType === 'tiles' ? null : radius;
+  return { targets, radius: effectiveRadius };
+}
+
 
 export function runRetrieve() {
   termClear('Global');
+  retrievedWorkdirs = [];
+  selectedWorkdir   = null;
+  document.getElementById('tilesRetrieved').innerHTML = '';
+  document.getElementById('retrieveActions').classList.add('hidden');
 
-  document.getElementById('sendCrop').style.display = 'none';
-  retrievedTiles = []; selectedTiles = [];
-
-  const tiles = document.getElementById('retrieveTiles').value.trim().split(/\s+/).filter(Boolean);
-  if (!tiles.length) {
-    termLine('Global', 'c-err', 'No tile indices provided');
+  const { targets, radius, error } = buildTargets();
+  if (!targets.length) {
+    termLine('Global', 'c-err', error ?? 'No targets provided');
     return;
   }
 
@@ -27,24 +63,22 @@ export function runRetrieve() {
   progShow('Retrieve'); progSet('Retrieve', 0);
 
   const payload = {
-    tile_indices: tiles,
-    provider:     document.getElementById('retrieveProvider').value,
-    dsr:          document.getElementById('retrieveDsr').value,
+    targets,
+    radius,
+    provider: document.getElementById('retrieveProvider').value,
+    dsr:      document.getElementById('retrieveDsr').value,
   };
 
   let heartbeatInterval = null;
-  let heartbeatStart    = null;
   let heartbeatEl       = null;
 
   function startHeartbeat() {
-    heartbeatStart = Date.now();
     heartbeatEl = document.createElement('span');
     heartbeatEl.className = 'c-dim';
     document.getElementById('termGlobal').appendChild(heartbeatEl);
-
+    const start = Date.now();
     heartbeatInterval = setInterval(() => {
-      const elapsed = ((Date.now() - heartbeatStart) / 1000).toFixed(0);
-      heartbeatEl.textContent = `  downloading... ${elapsed}s elapsed\n`;
+      heartbeatEl.textContent = `  downloading... ${((Date.now()-start)/1000).toFixed(0)}s elapsed\n`;
       document.getElementById('termGlobal').scrollTop = 9999;
     }, 1000);
   }
@@ -59,34 +93,27 @@ export function runRetrieve() {
   openWS('/retrieve/ws', payload, {
     cmd:  m => termLine('Global', 'c-cmd', '$ ' + m.message),
     log:  m => {
-      // "Download and extract datafiles to:" start the heartbeat, then stop it when the first file is received (or on error/exit)
-      if (m.message.startsWith('Download and extract')) {
-        termLine('Global', termClassFromMessage(m.message), m.message);
-        startHeartbeat();
-      } else {
-        termLine('Global', termClassFromMessage(m.message), m.message);
-      }
+      termLine('Global', termClassFromMessage(m.message), m.message);
+      if (m.message.startsWith('Download and extract')) startHeartbeat();
     },
     file: m => {
       stopHeartbeat();
       termLine('Global', 'c-ok', `✓ [${m.filter}] ${m.name}`);
-      startHeartbeat(); // restart heartbeat for next file (if any)
+      startHeartbeat();
     },
     progress: m => progSet('Retrieve', m.percent),
-    exit:  m => {
+    workdir:  m => addWorkdirChip(m.value),
+    exit: m => {
       stopHeartbeat();
       if (m.code !== 0) termLine('Global', 'c-err', `exit ${m.code}`);
-    },
-    tile: m => {
-      const tileIndex = m.index;
-      retrievedTiles.push(tileIndex);
-      addTileChip({ index: tileIndex });
-      document.getElementById('sendCrop').style.display = 'block';
     },
     done: m => {
       stopHeartbeat();
       progSet('Retrieve', 100);
       btn.disabled = false;
+      if (retrievedWorkdirs.length === 0) {
+        (m.tiles ?? []).forEach(t => addWorkdirChip(t));
+      }
     },
     error: m => {
       stopHeartbeat();
@@ -97,34 +124,49 @@ export function runRetrieve() {
 }
 
 
-function addTileChip(tile) {
+function addWorkdirChip(workdir) {
+  if (retrievedWorkdirs.includes(workdir)) return;
+  retrievedWorkdirs.push(workdir);
+
   const chip = document.createElement('div');
   chip.className     = 'tile';
-  chip.dataset.index = tile.index;
-  chip.textContent   = tile.index + (tile.mode ? ` (${tile.mode})` : '');
+  chip.dataset.value = workdir;
+  chip.textContent   = workdir;
   chip.onclick = () => {
-    const wasSelected = chip.classList.contains('sel');
-    // Unselect all chips and clear selectedTiles
-    document.querySelectorAll('#tilesRetrieved .tile').forEach(c => {
-      c.classList.remove('sel');
-    });
-    selectedTiles = [];
-    // select the clicked chip if it wasn't already selected
-    if (!wasSelected) {
-      chip.classList.add('sel');
-      selectedTiles.push(tile.index);
-    }
+    document.querySelectorAll('#tilesRetrieved .tile').forEach(c => c.classList.remove('sel'));
+    chip.classList.add('sel');
+    selectedWorkdir = workdir;
   };
-  document.getElementById("tilesRetrieved").appendChild(chip);
+  if (retrievedWorkdirs.length === 1) {
+    chip.classList.add('sel');
+    selectedWorkdir = workdir;
+  }
+
+  document.getElementById('tilesRetrieved').appendChild(chip);
+  document.getElementById('retrieveActions').classList.remove('hidden');
 }
 
+
+function getSelected() {
+  return selectedWorkdir ?? retrievedWorkdirs[0] ?? null;
+}
+
+
 export function sendToCrop() {
-  const tile = selectedTiles.length ? selectedTiles[0] : retrievedTiles[0]?.index;
-  if (!tile) return;
+  const workdir = getSelected();
+  if (!workdir) return;
   const details = document.getElementById('detailsCrop');
-  if (details) {
-    details.open = true;
-  }
-  document.getElementById('cropTile').value = tile;
+  if (details) details.open = true;
+  document.getElementById('cropTile').value = workdir;
   document.getElementById('cropTile').scrollIntoView({ behavior: 'smooth' });
+}
+
+
+export function sendToProcess() {
+  const workdir = getSelected();
+  if (!workdir) return;
+  const details = document.getElementById('detailsProcess');
+  if (details) details.open = true;
+  document.getElementById('processTile').value = workdir;
+  document.getElementById('processTile').scrollIntoView({ behavior: 'smooth' });
 }

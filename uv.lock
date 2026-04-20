@@ -85,8 +85,8 @@ wheels = [
 
 [[package]]
 name = "azulero"
-version = "1.1.1"
-source = { git = "https://github.com/kabasset/azulero.git?rev=develop#890b75aa49dc36f1c39540bc93431f51474f87ee" }
+version = "2.0"
+source = { git = "https://github.com/kabasset/azulero.git?rev=develop#46e1c250866ed021aaa920731335665113a611f9" }
 dependencies = [
     { name = "astropy" },
     { name = "astroquery" },
