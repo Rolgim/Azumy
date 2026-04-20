@@ -74,7 +74,7 @@ async def retrieve_ws(ws: WebSocket) -> None:
                 filter_name, filename = m_file.group(1), m_file.group(2)
                 downloaded.append({"filter": filter_name, "file": filename})
                 count += 1
-                pct = min(int(count / total_expected * 100), 99)
+                pct = min(int(count / total_expected * 100), 80)
                 await ws.send_json({"type": "file", "filter": filter_name, "name": filename})
                 await ws.send_json({"type": "progress", "percent": pct})
 

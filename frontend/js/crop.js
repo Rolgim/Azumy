@@ -142,4 +142,6 @@ export function sendCropToProcess() {
   }
   document.getElementById('processTile').value = slicing;
   document.getElementById('btnProcess').scrollIntoView({ behavior: 'smooth' });
+  const detailsCrop = document.getElementById('detailsCrop');
+  if (detailsCrop) detailsCrop.open = false;
 }

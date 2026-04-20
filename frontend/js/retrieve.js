@@ -46,7 +46,19 @@ function buildTargets() {
 
 
 export function runRetrieve() {
+  // cleaning
   termClear('Global');
+  const detailsFind = document.getElementById('detailsFind');
+  if (detailsFind) detailsFind.open = false;
+  const detailsProcess = document.getElementById('detailsProcess');
+  if (detailsProcess) detailsProcess.open = false;
+  const detailsCrop = document.getElementById('detailsCrop');
+  if (detailsCrop) detailsCrop.open = false;
+  const processResult = document.getElementById('processResult');
+  processResult.style.display = 'none';
+  const cropContainer= document.getElementById('cropContainer');
+  cropContainer.classList.add('hidden');
+
   retrievedWorkdirs = [];
   selectedWorkdir   = null;
   document.getElementById('tilesRetrieved').innerHTML = '';
@@ -155,18 +167,22 @@ function getSelected() {
 export function sendToCrop() {
   const workdir = getSelected();
   if (!workdir) return;
-  const details = document.getElementById('detailsCrop');
-  if (details) details.open = true;
+  const detailsCrop = document.getElementById('detailsCrop');
+  if (detailsCrop) detailsCrop.open = true;
   document.getElementById('cropTile').value = workdir;
   document.getElementById('cropTile').scrollIntoView({ behavior: 'smooth' });
+  const detailsRetrieve = document.getElementById('detailsRetrieve');
+  if (detailsRetrieve) detailsRetrieve.open = false;
 }
 
 
 export function sendToProcess() {
   const workdir = getSelected();
   if (!workdir) return;
-  const details = document.getElementById('detailsProcess');
-  if (details) details.open = true;
+  const detailsProcess = document.getElementById('detailsProcess');
+  if (detailsProcess) detailsProcess.open = true;
   document.getElementById('processTile').value = workdir;
   document.getElementById('processTile').scrollIntoView({ behavior: 'smooth' });
+  const detailsRetrieve = document.getElementById('detailsRetrieve');
+  if (detailsRetrieve) detailsRetrieve.open = false;
 }
