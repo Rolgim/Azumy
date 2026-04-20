@@ -7,23 +7,41 @@ import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS } from './websocket.js';
 
-export let retrievedWorkdirs = [];   // ex: ["102159776", "102159776/NGC6505"]
+export let retrievedWorkdirs = [];
 export let selectedWorkdir   = null;
 
 
 function buildTargets() {
-  const objects = document.getElementById('findObjects')?.value.trim().split(/\s+/).filter(Boolean) ?? [];
-  const ra      = parseFloat(document.getElementById('findRa')?.value);
-  const dec     = parseFloat(document.getElementById('findDec')?.value);
-  const radius  = document.getElementById('findRadius')?.value.trim() || null;
-  const tiles   = document.getElementById('retrieveTiles')?.value.trim().split(/\s+/).filter(Boolean) ?? [];
+  const sourceType = document.getElementById('sourceType')?.value ?? 'tiles';
+  const radius     = document.getElementById('findRadius')?.value.trim() || null;
 
   let targets;
-  if (objects.length)                  targets = objects;
-  else if (!isNaN(ra) && !isNaN(dec))  targets = [`${ra},${dec}`];
-  else                                 targets = tiles;
 
-  return { targets, radius };
+  switch (sourceType) {
+    case 'Object': {
+      const objects = document.getElementById('findObjects')?.value.trim().split(/\s+/).filter(Boolean) ?? [];
+      if (!objects.length) return { targets: [], radius, error: 'No objects specified' };
+      targets = objects;
+      break;
+    }
+    case 'RA/Dec': {
+      const ra  = parseFloat(document.getElementById('findRa')?.value);
+      const dec = parseFloat(document.getElementById('findDec')?.value);
+      if (isNaN(ra) || isNaN(dec)) return { targets: [], radius, error: 'Invalid RA/Dec' };
+      targets = [`${ra},${dec}`];
+      break;
+    }
+    case 'tiles':
+    default: {
+      targets = document.getElementById('retrieveTiles')?.value.trim().split(/\s+/).filter(Boolean) ?? [];
+      if (!targets.length) return { targets: [], radius: null, error: 'No tile indices provided' };
+      break;
+    }
+  }
+
+  // Radius only relevant for Object and RA/Dec
+  const effectiveRadius = sourceType === 'tiles' ? null : radius;
+  return { targets, radius: effectiveRadius };
 }
 
 
@@ -34,9 +52,9 @@ export function runRetrieve() {
   document.getElementById('tilesRetrieved').innerHTML = '';
   document.getElementById('retrieveActions').classList.add('hidden');
 
-  const { targets, radius } = buildTargets();
+  const { targets, radius, error } = buildTargets();
   if (!targets.length) {
-    termLine('Global', 'c-err', 'No targets — fill Objects, RA/Dec, or Tile indices');
+    termLine('Global', 'c-err', error ?? 'No targets provided');
     return;
   }
 
@@ -93,7 +111,6 @@ export function runRetrieve() {
       stopHeartbeat();
       progSet('Retrieve', 100);
       btn.disabled = false;
-      // Fallback si aucun workdir reçu : utiliser les tiles du message done
       if (retrievedWorkdirs.length === 0) {
         (m.tiles ?? []).forEach(t => addWorkdirChip(t));
       }
@@ -120,7 +137,6 @@ function addWorkdirChip(workdir) {
     chip.classList.add('sel');
     selectedWorkdir = workdir;
   };
-  // Sélectionner automatiquement le premier chip
   if (retrievedWorkdirs.length === 1) {
     chip.classList.add('sel');
     selectedWorkdir = workdir;
