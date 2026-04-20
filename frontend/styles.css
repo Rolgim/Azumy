@@ -350,3 +350,37 @@ details > summary {
 .executor {
   width:100%;
 }
+
+#cropStatus {
+  font-size:11px; 
+  color:#3d6a9a; 
+  margin-bottom:8px;
+}
+
+#cropPreview{
+  overflow:auto; 
+  border:1px solid #0f2040; 
+  border-radius:4px; 
+  background:#202020
+}
+
+#cropCanvas {
+  display:block; 
+  max-width:100%; 
+  cursor:crosshair; 
+  margin: 0 auto;
+}
+
+#cropResult {
+  display:none; 
+  margin-top:10px; 
+  display:flex; 
+  gap:10px; 
+  align-items:center;
+}
+
+#cropSlicing {
+  font-size:12px; 
+  color:#4ec9b0; 
+  flex:1;
+}

@@ -20,11 +20,12 @@ export async function loadCropPreview(tile) {
   currentTile = tile;
 
   const container = document.getElementById('cropContainer');
+  container.classList.add('hidden');
   const canvas    = document.getElementById('cropCanvas');
   const status    = document.getElementById('cropStatus');
 
   status.textContent = 'Loading VIS channel…';
-  container.style.display = 'block';
+  container.classList.remove('hidden');
   clearSelection();
 
   // Charger l'image via fetch pour récupérer les headers X-Tile-Width/Height

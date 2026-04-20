@@ -74,75 +74,70 @@ SPDX-License-Identifier: Apache-2.0
         <div id="findActions" class="find-actions hidden">
           <button id="btnSendRetrieve">→ Retrieve</button>
         </div>
-    </details>
+      </details>
     
-    <!-- Retrieve -->
-    <details id="detailsRetrieve">
-      <summary class="section-title">Retrieve</summary>
-      <div class="row">
-        <div>
-          <label>Tile indices</label>
-          <input id="retrieveTiles" type="text" placeholder="102159776 102159777">
+      <!-- Retrieve -->
+      <details id="detailsRetrieve">
+        <summary class="section-title">Retrieve</summary>
+        <div class="row">
+          <div>
+            <label>Tile indices</label>
+            <input id="retrieveTiles" type="text" placeholder="102159776 102159777">
+          </div>
+          <div>
+            <label>Provider</label>
+            <select id="retrieveProvider">
+              <option value="idr">IDR (private)</option>
+              <option value="sas">SAS (public)</option>
+              <option value="dss">DSS</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label>Provider</label>
-          <select id="retrieveProvider">
-            <option value="idr">IDR (private)</option>
-            <option value="sas">SAS (public)</option>
-            <option value="dss">DSS</option>
-          </select>
+        <div class="row">
+          <div>
+          <label>Dataset releases</label>
+          <input id="retrieveDsr" type="text" value="DR1_R2,DR1_R1,Q1_R1">
+          </div>
+          <div class="executeActions">
+            <label>&nbsp;</label>
+            <button id="btnRetrieve" class="executor">▶ retrieve</button>
+          </div>
         </div>
-      </div>
+        <div class="progress" id="progRetrieve">
+          <div class="progress-bar" id="progRetrieveBar"></div>
+        </div>
+        <div class="tiles" id="tilesRetrieved"></div>
+        <div id="retrieveActions" class="retrieve-actions hidden">
+          <button id="btnSendCrop">→ Crop</button>
+          <button id="btnSendProcess">→ Process</button>
+        </div>
+      </details>
 
-      <div class="row">
-        <div>
-        <label>Dataset releases</label>
-        <input id="retrieveDsr" type="text" value="DR1_R2,DR1_R1,Q1_R1">
-        </div>
-        <div class="executeActions">
-          <label>&nbsp;</label>
-          <button id="btnRetrieve" class="executor">▶ retrieve</button>
-        </div>
-      </div>
-
-      <div class="progress" id="progRetrieve">
-        <div class="progress-bar" id="progRetrieveBar"></div>
-      </div>
-
-      <div class="tiles" id="tilesRetrieved"></div>
-      
-      <div id="retrieveActions" class="retrieve-actions hidden">
-        <button id="btnSendCrop">→ Crop</button>
-        <button id="btnSendProcess">→ Process</button>
-      </div>
-      
-    </details>
       <!-- Crop -->
-    <details id="detailsCrop">
-      <summary class="section-title">Crop</summary>
+      <details id="detailsCrop">
+        <summary class="section-title">Crop</summary>
+        <div class="row">
+          <div>
+            <label>Tile index</label>
+            <input id="cropTile" type="text" placeholder="102159776">
+          </div>
+          <div class= "executeActions">
+            <label>&nbsp;</label>
+            <button class="executor" id="btnCropPreview">▶ Load VIS preview</button>
+          </div>
+        </div>
+        <div id="cropContainer" class="hidden">
+          <div id="cropStatus"></div>
+          <div id="cropPreview">
+            <canvas id="cropCanvas"></canvas>
+          </div>
+          <div id="cropResult">
+            <code id="cropSlicing"></code>
+            <button id="btnCropSend">→ Process</button>
+          </div>
+        </div>
+      </details>
 
-      <div class="row">
-        <div>
-          <label>Tile index</label>
-          <input id="cropTile" type="text" placeholder="102159776">
-        </div>
-        <div style="display:flex; align-items:flex-end; padding-bottom:12px">
-          <button class="primary" id="btnCropPreview" style="width:100%">▶ Load VIS preview</button>
-        </div>
-      </div>
-
-      <div id="cropContainer" style="display:none">
-        <div id="cropStatus" style="font-size:11px; color:#3d6a9a; margin-bottom:8px"></div>
-        <div style="overflow:auto; border:1px solid #0f2040; border-radius:4px; background:#202020">
-          <canvas id="cropCanvas" style="display:block; max-width:100%; cursor:crosshair; margin: 0 auto;"></canvas>
-        </div>
-
-        <div id="cropResult" style="display:none; margin-top:10px; display:flex; gap:10px; align-items:center">
-          <code id="cropSlicing" style="font-size:12px; color:#4ec9b0; flex:1"></code>
-          <button id="btnCropSend">→ Send to Process</button>
-        </div>
-      </div>
-    </details>
       <!-- Process -->
     <details id="detailsProcess">
       <summary class="section-title">Process</summary>
