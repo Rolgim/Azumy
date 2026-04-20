@@ -96,7 +96,11 @@ input, select {
 input:focus, select:focus { border-color: #3d85f5; }
 select option { background: #07111f; }
 
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 12px; }
+  
 @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
 
 button {
@@ -167,6 +171,7 @@ button.primary:hover {
   display: none;
 }
 .progress-bar {
+  width: 0%;
   height: 100%;
   background: linear-gradient(90deg, #3d85f5, #4ec9b0);
   transition: width .4s ease;
@@ -306,6 +311,18 @@ details > summary {
   gap: 8px;
 }
 
+.find-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.uploadBtn {
+  display:flex; 
+  align-items:flex-end; 
+  padding-bottom:12px
+}
+
 .retrieve-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -314,4 +331,22 @@ details > summary {
 
 .hidden {
   display: none;
+}
+
+.execute-actions {
+  display:flex; 
+  align-items:flex-end;
+  padding-bottom:12px"
+}
+
+#btnUploadTiling {
+  width: 100%;
+}
+
+#tilingFileInput {
+  display: none;
+}
+
+.executor {
+  width:100%;
 }

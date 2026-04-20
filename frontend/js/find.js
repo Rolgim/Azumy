@@ -97,8 +97,8 @@ function syncFieldsToMap() {
 
 export function runFind() {
   termClear('Global');
+  document.getElementById('findActions').classList.add('hidden');
   document.getElementById('tilesResult').innerHTML = '';
-  document.getElementById('sendRetrieve').style.display = 'none';
   foundTiles = []; selectedTiles = [];
 
   const btn = document.getElementById('btnFind');
@@ -129,7 +129,7 @@ export function runFind() {
     tile: m => {
       foundTiles.push(m.data);
       addTileChip(m.data);
-      document.getElementById('sendRetrieve').style.display = 'block';
+      document.getElementById('findActions').classList.remove('hidden');
     },
     exit:  m => { if (m.code !== 0) termLine('Global', 'c-err', `exit ${m.code}`); },
     done:  () => { progSet('Find', 100); btn.disabled = false; },

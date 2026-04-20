@@ -32,6 +32,7 @@ SPDX-License-Identifier: Apache-2.0
   <div class="right-pane">
 
     <section class="section">
+
       <!-- Find -->
       <details id="detailsFind" open>
         <summary class="section-title">Find</summary>
@@ -56,28 +57,27 @@ SPDX-License-Identifier: Apache-2.0
         <div class="row">
           <div>
             <label>Tiling</label>
-            <div style="display:flex; align-items:flex-end; padding-bottom:12px">
-              <button class="primary" id="btnUploadTiling" style="width:100%">Upload</button>
-              <input id="tilingFileInput" type="file" accept=".geojson" style="display:none">
+            <div id="tilingUpload" class="uploadBtn">
+              <button class="primary" id="btnUploadTiling">Upload</button>
+              <input id="tilingFileInput" type="file" accept=".geojson">
             </div>
           </div>
-          <div style="display:flex; align-items:flex-end; padding-bottom:12px">
-            <button id="btnFind" style="width:100%">▶ Find</button>
+          <div class="executeActions">
+            <label>&nbsp;</label>
+            <button id="btnFind" class="executor">▶ Find</button>
           </div>
         </div>
         <div class="progress" id="progFind">
-        <div class="progress-bar" id="progFindBar" style="width:0%"></div>
+        <div class="progress-bar" id="progFindBar"></div>
         </div>
-        <div class="row">
-          <div class="tiles" id="tilesResult" style="width:100%;"></div>
-          <div id="sendRetrieve" style="display:none; margin-top:10px;">
-            <button id="btnSendRetrieve" style="width:100%">→ Send to Retrieve</button>
-          </div>
+        <div class="tiles" id="tilesResult"></div>
+        <div id="findActions" class="find-actions hidden">
+          <button id="btnSendRetrieve">→ Retrieve</button>
         </div>
     </details>
-
-    <details id="detailsRetrieve">
+    
     <!-- Retrieve -->
+    <details id="detailsRetrieve">
       <summary class="section-title">Retrieve</summary>
       <div class="row">
         <div>
@@ -105,7 +105,7 @@ SPDX-License-Identifier: Apache-2.0
       </div>
 
       <div class="progress" id="progRetrieve">
-        <div class="progress-bar" id="progRetrieveBar" style="width:0%"></div>
+        <div class="progress-bar" id="progRetrieveBar"></div>
       </div>
 
       <div class="tiles" id="tilesRetrieved"></div>
