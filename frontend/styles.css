@@ -259,7 +259,7 @@ button.primary:hover {
   gap: 16px;
 }
 
-/* carte */
+/* map */
 #aladinMap {
   width: 100%;
   height: 780px;
@@ -318,6 +318,7 @@ details > summary {
   gap: 8px;
 }
 
+/* Specifics */
 .find-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
