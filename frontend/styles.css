@@ -96,6 +96,11 @@ input, select {
 input:focus, select:focus { border-color: #3d85f5; }
 select option { background: #07111f; }
 
+input[type="checkbox"] {
+  width: auto;
+  margin-bottom: 0;
+}
+
 .row { 
   display: grid; 
   grid-template-columns: 1fr 1fr; 
@@ -203,8 +208,10 @@ button.primary:hover {
   display: flex;
   gap: 8px;
   margin-bottom: 14px;
+  margin-top:8px;
   width: 100%;
 }
+
 .engine-option {
   display: flex;
   flex: 1; 
@@ -383,4 +390,54 @@ details > summary {
   font-size:12px; 
   color:#4ec9b0; 
   flex:1;
+}
+
+.processParameters {
+  font-size:11px; 
+  color:#3d6a9a; 
+  cursor:pointer; 
+  user-select:none; 
+  text-transform:uppercase; 
+  letter-spacing:.08em; 
+  margin-bottom:12px;
+}
+
+.checkboxDiv {
+  display:flex;
+  gap:8px;
+  align-items:center 
+}
+
+.btnResetProcess {
+  width:100%;
+}
+
+#btnProcess {
+  margin-top:12px;
+}
+
+#processResult {
+  display:none; 
+  text-align:center; 
+  margin-top:14px;
+}
+
+#processResultWrapper {
+  overflow:auto; 
+  border:1px solid #222; 
+  border-radius:4px; 
+  background:#202020;
+}
+
+#processResultImg {
+  display:block; 
+  max-width:100%; 
+  height:auto; 
+  margin:0 auto;
+}
+
+#processResultLabel {
+  margin-top:8px; 
+  color:#ccc; 
+  font-size:12px;
 }
