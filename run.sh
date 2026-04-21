@@ -7,7 +7,7 @@ ENV_FILE=".env"
 if [ ! -f "$ENV_FILE" ]; then
   echo ""
   echo "  ╔══════════════════════════════════════╗"
-  echo "  ║         Azumy  —  Initial setup      ║"
+  echo "  ║        Azumy —  Initial setup        ║"
   echo "  ╚══════════════════════════════════════╝"
   echo ""
 
