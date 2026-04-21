@@ -6,10 +6,10 @@ import re
 from pathlib import Path
 from typing import Any, Literal
 
-import pyvips
 import yaml
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
+from PIL import Image
 from pydantic import BaseModel
 
 from utils import build_cmd, stream_command, ws_path
@@ -156,9 +156,10 @@ def _eummy_args(req: EummyProcessReq, tile_dir: Path) -> list[str]:
 # Common ----------------------------------------------------------------
 def generate_preview(input_file: str, size: int = 512) -> str:
     preview_file = re.sub(r"\.(tif|tiff)$", "_preview.jpg", input_file, flags=re.I)
-    image = pyvips.Image.thumbnail(input_file, size, size="both")
-    image = image.cast("uchar")
-    image.write_to_file(preview_file, Q=85)
+    with Image.open(input_file) as img:
+        img.thumbnail((size, size))
+        rgb = img.convert("RGB")
+        rgb.save(preview_file, "JPEG", quality=85)
     return preview_file
 
 
