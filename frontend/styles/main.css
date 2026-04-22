@@ -14,12 +14,36 @@ body {
 }
 
 header {
-  text-align: center;
-  padding: 10px 10px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+  position: relative;
+
+  padding: 10px;
   border-bottom: 1px solid #0f2040;
   margin-bottom: 16px;
   background: linear-gradient(180deg, #050d1a 0%, #06101e 100%);
 }
+
+header a {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 12px;
+  color: #3d6a9a;
+  text-decoration: none;
+  border: 1px solid #1a3a6a;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-family: monospace;
+  transition: all .15s;
+}
+
+header a:hover { 
+  border-color: #3d85f5; 
+  color: #3d85f5; 
+}
+
 .logo {
   width: 180px;
   height: auto;

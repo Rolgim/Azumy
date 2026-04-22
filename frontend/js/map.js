@@ -5,7 +5,7 @@
  * map.js — Aladin Lite v3 sky map
  */
 
-import { API } from './websocket.js';
+import { API } from './config.js';
 
 let aladin         = null;
 let markerLayer    = null;
