@@ -55,13 +55,13 @@ fi
 
 # Docker compose
 echo ""
-echo "  Starting Azulweb..."
+echo "  Starting Azumy..."
 echo ""
 
 docker compose --env-file "$ENV_FILE" up --build -d
 
 echo ""
-echo "  ✓ Azulweb is running at http://localhost:8000"
+echo "  ✓ Azumy is running at http://localhost:8000"
 echo ""
 echo "  To stop:      docker compose down"
 echo "  To view logs: docker compose logs -f"

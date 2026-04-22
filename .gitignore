@@ -1,5 +1,10 @@
-workspace/
 __pycache__/
+# workspace
+*/workspace/*
+*/Workspace/*
+Workspace/*
+workspace/*
+*.tiff
 *.fits
 *.pyc
 .venv/
