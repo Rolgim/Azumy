@@ -19,6 +19,7 @@
   Web interface for <a href="https://github.com/kabasset/azulero">Azulero</a> by A. Basset and <a href="https://github.com/schirmermischa/eummy">Eummy</a> by M. Schirmer - two pipelines designed to produce color images from <a href="https://www.esa.int/Science_Exploration/Space_Science/Euclid">Euclid</a> space telescope data.
 </p>
 
+
 ## Overview
 
 Azumy wraps the `azul` and `eummy` command-line pipelines into a browser-based interface. It covers the full workflow:
@@ -34,7 +35,7 @@ Azumy wraps the `azul` and `eummy` command-line pipelines into a browser-based i
 </div>
 
 Screenshot of the interface:
-<img width="1852" height="931" alt="image" src="https://github.com/user-attachments/assets/ffd311ff-6221-4087-a194-5e66a3c0132f" />
+<img width="1845" height="953" alt="image" src="https://github.com/user-attachments/assets/d83d007b-47cc-4c2a-b7b8-7a6ab46c00ae" />
 
 
 ## Requirements

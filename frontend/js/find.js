@@ -6,13 +6,14 @@
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
 import { openWS, API } from './websocket.js';
-import { initMap, goTo, loadTiling } from './map.js';
+import { initMap, goTo, loadTiling, drawCircle } from './map.js';
 
 export let foundTiles    = [];
 export let selectedTiles = [];
 
 let selectedRa  = null;
 let selectedDec = null;
+let selectedRadius = null;
 
 export async function initFind() {
   await initMap('aladinMap');
@@ -20,7 +21,7 @@ export async function initFind() {
 }
 
 function initUI() {
-  // Map → fill fields
+  // Map → fill fields without radius
   document.addEventListener('sky:select', ({ detail: { ra, dec } }) => {
     selectedRa  = ra;
     selectedDec = dec;
@@ -28,9 +29,20 @@ function initUI() {
     document.getElementById('findDec').value = dec.toFixed(6);
   });
 
+    // Map → fill fields with radius
+  document.addEventListener('sky:region', ({ detail: { ra, dec, radius } }) => {
+    selectedRa  = ra;
+    selectedDec = dec;
+    selectedRadius = radius;
+    document.getElementById('findRa').value  = ra.toFixed(6);
+    document.getElementById('findDec').value = dec.toFixed(6);
+    document.getElementById('findRadius').value = radius.toFixed(6);
+  });
+
   // Manual fields → map
   document.getElementById('findRa')?.addEventListener('change', syncFieldsToMap);
   document.getElementById('findDec')?.addEventListener('change', syncFieldsToMap);
+  document.getElementById('findRadius')?.addEventListener('change', syncFieldsToMap);
 
   // Tiling input → update map overlay
   document.getElementById('findTiling')?.addEventListener('change', e => loadTiling(e.target.value.trim()));
@@ -78,12 +90,15 @@ function syncFieldsToMap() {
   if (isNaN(ra) || isNaN(dec)) return;
   selectedRa = ra; selectedDec = dec;
   goTo(ra, dec);
+  const radius = parseFloat(document.getElementById('findRadius').value);
+  selectedRadius = isNaN(radius) ? null : radius;
+  drawCircle(ra, dec, selectedRadius);
 }
 
 export function runFind() {
-  termClear('Find');
+  termClear('Global');
+  document.getElementById('findActions').classList.add('hidden');
   document.getElementById('tilesResult').innerHTML = '';
-  document.getElementById('sendRetrieve').style.display = 'none';
   foundTiles = []; selectedTiles = [];
 
   const btn = document.getElementById('btnFind');
@@ -103,9 +118,9 @@ export function runFind() {
   let progress = 0;
 
   openWS('/find/ws', payload, {
-    cmd:  m => termLine('Find', 'c-cmd', '$ ' + m.message),
+    cmd:  m => termLine('Global', 'c-cmd', '$ ' + m.message),
     log:  m => {
-      termLine('Find', termClassFromMessage(m.message), m.message);
+      termLine('Global', termClassFromMessage(m.message), m.message);
       const coordMatch = m.message.match(/Coordinates:\s*([\d.]+)\s*deg[^,]*,\s*([\d.]+)/);
       if (coordMatch) goTo(parseFloat(coordMatch[1]), parseFloat(coordMatch[2]));
       progress = Math.min(progress + 10, 90);
@@ -114,11 +129,11 @@ export function runFind() {
     tile: m => {
       foundTiles.push(m.data);
       addTileChip(m.data);
-      document.getElementById('sendRetrieve').style.display = 'block';
+      document.getElementById('findActions').classList.remove('hidden');
     },
-    exit:  m => { if (m.code !== 0) termLine('Find', 'c-err', `exit ${m.code}`); },
+    exit:  m => { if (m.code !== 0) termLine('Global', 'c-err', `exit ${m.code}`); },
     done:  () => { progSet('Find', 100); btn.disabled = false; },
-    error: m => { termLine('Find', 'c-err', m.message); btn.disabled = false; },
+    error: m => { termLine('Global', 'c-err', m.message); btn.disabled = false; },
   });
 }
 
@@ -140,6 +155,10 @@ export function sendToRetrieve() {
   const toAdd   = selectedTiles.length ? selectedTiles : foundTiles.map(t => t.index);
   const all     = [...new Set([...current.split(/\s+/).filter(Boolean), ...toAdd])];
   document.getElementById('retrieveTiles').value = all.join(' ');
-  document.getElementById('termRetrieve').innerHTML = '';
-  document.getElementById('termRetrieve').scrollIntoView({ behavior: 'smooth' });
+  const details = document.getElementById('detailsRetrieve');
+  if (details) {
+    details.open = true;
+  }
+  document.getElementById('termGlobal').innerHTML = '';
+  document.getElementById('btnRetrieve').scrollIntoView({ behavior: 'smooth' });
 }

@@ -20,11 +20,12 @@ export async function loadCropPreview(tile) {
   currentTile = tile;
 
   const container = document.getElementById('cropContainer');
+  container.classList.add('hidden');
   const canvas    = document.getElementById('cropCanvas');
   const status    = document.getElementById('cropStatus');
 
   status.textContent = 'Loading VIS channel…';
-  container.style.display = 'block';
+  container.classList.remove('hidden');
   clearSelection();
 
   // Charger l'image via fetch pour récupérer les headers X-Tile-Width/Height
@@ -57,24 +58,40 @@ export async function loadCropPreview(tile) {
 }
 
 function initDraw(canvas, ctx, img) {
+  // Function to convert mouse event coordinates to canvas coordinates, accounting for CSS scaling
+  const getCanvasCoords = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    
+    // 1. compute scale factors between canvas size and displayed size
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    // 2. apply inverse of CSS transform to mouse coordinates
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
+    };
+  };
+
   canvas.onmousedown = e => {
-    const r = canvas.getBoundingClientRect();
-    startX = e.clientX - r.left;
-    startY = e.clientY - r.top;
+    const coords = getCanvasCoords(e);
+    startX = coords.x;
+    startY = coords.y;
     drawing = true;
   };
 
   canvas.onmousemove = e => {
     if (!drawing) return;
-    const r = canvas.getBoundingClientRect();
-    endX = e.clientX - r.left;
-    endY = e.clientY - r.top;
+    const coords = getCanvasCoords(e);
+    endX = coords.x;
+    endY = coords.y;
+
     // Redraw
     ctx.drawImage(img, 0, 0);
     ctx.strokeStyle = '#4ec9b0';
-    ctx.lineWidth   = 2;
+    ctx.lineWidth = 2 * (canvas.width / 1000); 
     ctx.strokeRect(startX, startY, endX - startX, endY - startY);
-    ctx.fillStyle = 'rgba(78,201,176,0.08)';
+    ctx.fillStyle = 'rgba(78,201,176,0.15)';
     ctx.fillRect(startX, startY, endX - startX, endY - startY);
   };
 
@@ -88,11 +105,11 @@ function initDraw(canvas, ctx, img) {
 }
 
 async function computeSlicing(canvas) {
-  // Convertir les coords canvas → coords image originale
+  // convert coords canvas → coords image
   const scaleX = tileWidth  / canvas.width;
   const scaleY = tileHeight / canvas.height;
 
-  // L'image est flipud donc y est inversé
+  // normalize to top-left origin and ensure x0 < x1, y0 < y1
   const x0 = Math.min(startX, endX) * scaleX;
   const x1 = Math.max(startX, endX) * scaleX;
   const y0 = (canvas.height - Math.max(startY, endY)) * scaleY;
@@ -119,6 +136,12 @@ function clearSelection() {
 export function sendCropToProcess() {
   const slicing = document.getElementById('cropSlicing').textContent;
   if (!slicing) return;
+  const details = document.getElementById('detailsProcess');
+  if (details) {
+    details.open = true;
+  }
   document.getElementById('processTile').value = slicing;
-  document.getElementById('termProcess').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('btnProcess').scrollIntoView({ behavior: 'smooth' });
+  const detailsCrop = document.getElementById('detailsCrop');
+  if (detailsCrop) detailsCrop.open = false;
 }

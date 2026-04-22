@@ -5,7 +5,7 @@
 
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
-import { openWS, API } from './websocket.js';
+import { openWS, API } from './config.js';
 
 // Defaults //////////////////////////////////////////
 
@@ -100,9 +100,9 @@ function buildPayload(tile) {
 
 export function runProcess() {
   const tile = $('processTile').value.trim();
-  if (!tile) { termLine('Process', 'c-err', 'Tile spec required'); return; }
+  if (!tile) { termLine('Global', 'c-err', 'Tile spec required'); return; }
 
-  termClear('Process');
+  termClear('Global');
   $('processResult').style.display = 'none';
 
   const btn = $('btnProcess');
@@ -110,12 +110,12 @@ export function runProcess() {
   progShow('Process'); progSet('Process', 0);
 
   openWS('/process/ws', buildPayload(tile), {
-    cmd:         m => termLine('Process', 'c-cmd', '$ ' + m.message),
-    log:         m => termLine('Process', termClassFromMessage(m.message), m.message),
+    cmd:         m => termLine('Global', 'c-cmd', '$ ' + m.message),
+    log:         m => termLine('Global', termClassFromMessage(m.message), m.message),
     progress:    m => progSet('Process', m.percent),
     output_file: m => showResult(m.name, tile.split('[')[0]),
     preview:     m => showResult(m.name, tile.split('[')[0]),
-    exit:        m => { if (m.code !== 0) termLine('Process', 'c-err', `exit ${m.code}`); },
+    exit:        m => { if (m.code !== 0) termLine('Global', 'c-err', `exit ${m.code}`); },
     done:        m => {
       progSet('Process', 100);
       btn.disabled = false;
@@ -123,7 +123,7 @@ export function runProcess() {
       if (m.preview_file) showResult(m.preview_file, tileNum);
       else if (m.output_file) showResult(m.output_file, tileNum);
     },
-    error: m => { termLine('Process', 'c-err', m.message); btn.disabled = false; },
+    error: m => { termLine('Global', 'c-err', m.message); btn.disabled = false; },
   });
 }
 
