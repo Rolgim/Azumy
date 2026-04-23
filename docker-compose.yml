@@ -1,7 +1,7 @@
 services:
-  azulweb:
+  azumy:
     build: .
-    image: azulweb
+    image: azumy
     ports:
       - "8000:8000"
     volumes:
