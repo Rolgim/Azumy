@@ -5,7 +5,7 @@
 
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
-import { openWS } from './websocket.js';
+import { openWS } from './config.js';
 
 export let retrievedWorkdirs = [];
 export let selectedWorkdir   = null;

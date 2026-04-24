@@ -1,0 +1,35 @@
+<!--
+SPDX-FileCopyrightText: Copyright (C) 2026, CNES (Rollin Gimenez)
+SPDX-License-Identifier: Apache-2.0
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Azumy - Gallery</title>
+  <link rel="icon" type="image/x-icon" href="img/azumy_favicon.png">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/gallery.css">
+</head>
+<body>
+
+<div class="gallery-header">
+  <img src="img/azumy.png" alt="Azumy logo">
+  <a href="/">← Back to pipeline</a>
+</div>
+
+<div id="galleryGrid" class="gallery-grid"></div>
+<div id="emptyState" class="empty-state" style="display:none">
+  No images found in workspace.<br>Run the pipeline to generate images.
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">✕</button>
+  <div class="lightbox-spinner" id="lightboxSpinner">Loading…</div>
+  <img id="lightboxImg" src="" alt="" style="display:none">
+  <div class="lightbox-info" id="lightboxInfo"></div>
+</div>
+<script type="module" src="js/gallery/gallery.js"></script>
+</body>
+</html>

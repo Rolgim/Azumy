@@ -7,6 +7,8 @@ from typing import Any, TypedDict
 
 from fastapi import APIRouter, HTTPException
 
+from utils import ws_path
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -63,3 +65,65 @@ def latest_image(tile_index: str, workspace: str = ".") -> dict[str, str]:
         raise HTTPException(404, "No image")
     latest = max(imgs, key=lambda p: p.stat().st_mtime)
     return {"url": f"/outputs/{tile_index}/{latest.name}", "name": latest.name}
+
+
+@router.get("/gallery")
+def gallery():
+    ws = ws_path()
+    if not ws.exists():
+        return {"entries": []}
+
+    entries = []
+
+    # previews
+    previews = list(ws.rglob("*_preview.jpg"))
+
+    for preview in previews:
+        rel = preview.relative_to(ws)
+        parts = rel.parts
+
+        workdir = str(Path(*parts[:-1])) if len(parts) > 1 else parts[0]
+
+        stem = preview.stem.replace("_preview", "")
+        parent = preview.parent
+
+        # full-res candidates
+        candidates = [
+            parent / f"{stem}.tiff",
+            parent / f"{stem}.tif",
+            parent / f"{stem}.jpg",
+            parent / f"{stem}.png",
+        ]
+
+        full = next((p for p in candidates if p.exists()), None)
+
+        preview_url = "/workspace/" + str(rel).replace("\\", "/")
+
+        if full:
+            full_url = "/workspace/" + str(full.relative_to(ws)).replace("\\", "/")
+            size_mb = round(full.stat().st_size / 1e6, 2)
+            mtime = full.stat().st_mtime
+        else:
+            # fallback - no full available
+            full_url = preview_url
+            size_mb = round(preview.stat().st_size / 1e6, 2)
+            mtime = preview.stat().st_mtime
+
+        # Engine detection
+        engine = "azul" if "_adjusted" in stem else "eummy"
+
+        entries.append(
+            {
+                "workdir": workdir,
+                "filename": stem,
+                "preview_url": preview_url,
+                "full_url": full_url,
+                "engine": engine,
+                "size_mb": size_mb,
+                "mtime": mtime,
+            }
+        )
+
+    entries.sort(key=lambda e: e["mtime"], reverse=True)
+
+    return {"entries": entries}
