@@ -112,19 +112,26 @@ Azumy/
 │   └── workspace.py     # Workspace introspection
 ├── frontend/
 │   ├── index.html
-│   ├── styles.css
+│   ├── gallery.html
 │   ├── aladin.js        # Aladin Lite (vendored)
+│   ├── styles/
+│   |   ├── main.css
+│   |   └── gallery.css
 │   └── js/
 │       ├── main.js
-│       ├── find.js
-│       ├── retrieve.js
+│       ├── config.js
 │       ├── crop.js
+│       ├── find.js
 │       ├── process.js
 │       ├── map.js
-│       ├── settings.js
-│       ├── terminal.js
 │       ├── progress.js
-│       └── websocket.js
+│       ├── retrieve.js
+│       ├── terminal.js
+│       └── gallery/
+|           ├── api.js
+|           ├── lightbox.js
+|           ├── render.js
+│           └── gallery.js    
 ├── Dockerfile
 ├── docker-compose.yml
 ├── run.sh               # First-launch setup script
