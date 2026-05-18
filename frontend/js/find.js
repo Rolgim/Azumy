@@ -5,7 +5,7 @@
 
 import { termClear, termLine, termClassFromMessage } from './terminal.js';
 import { progShow, progSet } from './progress.js';
-import { openWS, API } from './websocket.js';
+import { openWS, API } from './config.js';
 import { initMap, goTo, loadTiling, drawCircle } from './map.js';
 
 export let foundTiles    = [];

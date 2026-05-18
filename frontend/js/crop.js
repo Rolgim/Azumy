@@ -5,7 +5,7 @@
  * crop.js — Interactive crop via canvas rectangle selection
  */
 
-import { API } from './websocket.js';
+import { API } from './config.js';
 
 let tileWidth  = 0;
 let tileHeight = 0;
