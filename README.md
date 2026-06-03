@@ -35,8 +35,7 @@ Azumy wraps the `azul` and `eummy` command-line pipelines into a browser-based i
 </div>
 
 Screenshot of the interface:
-<img width="1845" height="953" alt="image" src="https://github.com/user-attachments/assets/d83d007b-47cc-4c2a-b7b8-7a6ab46c00ae" />
-
+<img width="1840" height="962" alt="image" src="https://github.com/user-attachments/assets/95f9d1f9-d1a3-4d83-b127-d2c8db4ac165" />
 
 ## Requirements
 
